@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "727484357557",
+    "project_id": "bock-one-cacd4",
+    "storage_bucket": "bock-one-cacd4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727484357557:android:af8b733a0872356d9217fc",
+        "android_client_info": {
+          "package_name": "com.example.trial"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2IPNm1Zfp7o3ivZXNRGzUqDRyknOebqY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
