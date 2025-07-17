@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/screens/auth_screen.dart';
 import 'package:trial/screens/edit_profile_screen.dart';
 
@@ -129,8 +130,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () {
-                  // Logout → Go back to AuthScreen
+                onPressed: () async{
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('loggedInUsername');
+
                   Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(builder: (_) => const AuthScreen()),
                         (route) => false,

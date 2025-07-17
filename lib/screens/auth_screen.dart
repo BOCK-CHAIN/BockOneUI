@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/widgets/image_picker.dart';
 import 'package:trial/services/generating_hex_id.dart';
 import 'package:date_time_format/date_time_format.dart';
@@ -84,6 +85,10 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         return;
       }
 
+      // ✅ Save login info
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('loggedInUsername', _enteredUserName);
+
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (ctx) => HomeScreen(userName: _enteredUserName,)),
       );
@@ -141,6 +146,9 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         'profilePhoto':profilePhoto,
         'createdAt': Timestamp.now(),
       });
+
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('loggedInUsername', _enteredUserName);
 
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (ctx) => HomeScreen(userName: _enteredUserName,)),

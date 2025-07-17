@@ -43,6 +43,8 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   http: ^1.4.0
   image_picker: ^1.1.2
+  shared_preferences: ^2.5.3
+  flutter_launcher_icons: ^0.14.4
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +60,12 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: 'assets/icons/BOCK.png'
+  adaptive_icon_foreground: 'assets/icons/foreground.png'
+  adaptive_icon_background: 'assets/icons/background.png'
 # The following section is specific to Flutter packages.
 flutter:
 
@@ -83,6 +91,9 @@ flutter:
     - assets/images/space.png
     - assets/images/institutes.png
     - assets/images/force.png
+    - assets/icons/BOCK.png
+    - assets/icons/foreground.png
+    - assets/icons/background.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

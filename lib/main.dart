@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/screens/auth_screen.dart';
+import 'package:trial/screens/home_screen.dart';
 import 'firebase_options.dart';
 
 void main() async{
@@ -8,17 +10,23 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+
+  final prefs = await SharedPreferences.getInstance();
+  final savedUsername = prefs.getString('loggedInUsername');
+  runApp(MyApp(initialUsername: savedUsername));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final String? initialUsername;
+  const MyApp({super.key,required this.initialUsername});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: AuthScreen()
+      home: initialUsername != null
+          ? HomeScreen(userName: initialUsername!)
+          : const AuthScreen(),
     );
   }
 }

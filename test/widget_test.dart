@@ -7,13 +7,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:trial/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedUsername = prefs.getString('loggedInUsername');
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+    await tester.pumpWidget(MyApp(initialUsername: savedUsername,));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
