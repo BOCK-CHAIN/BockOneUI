@@ -23,11 +23,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     fetchUserData();
   }
 
-  void refresh()
-  {
-    setState(() {});
-  }
-
   Future<void> fetchUserData() async {
     final snapshot = await FirebaseFirestore.instance
         .collection("users")
@@ -47,118 +42,136 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFEBDFF4),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF9C27B0), // Deep Purple
+        backgroundColor: const Color(0xFF9C27B0),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back,color: Colors.white,),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          "Profile",
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text("Profile", style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
-              onPressed: ()async{
-                await Navigator.of(context).push(MaterialPageRoute(builder: (context)=>EditProfileScreen(username: userData!['username'])));
-                await fetchUserData();
-              },
-              icon:const Icon(Icons.edit,color: Colors.white,)),
+            onPressed: () async {
+              await Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => EditProfileScreen(
+                    username: userData!['username'],
+                  ),
+                ),
+              );
+              await fetchUserData();
+            },
+            icon: const Icon(Icons.edit, color: Colors.white),
+          ),
         ],
       ),
       body: userData == null
           ? const Center(child: CircularProgressIndicator(color: Colors.purple))
-          : Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Container(
+          : LayoutBuilder(
+        builder: (context, constraints) {
+          return Center(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: const[
-                  BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0,0.2),
-                    blurRadius: 10,
-                    offset: Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: const Color(0xFFBA68C8),
-                    /*child: Icon(Icons.person, color: Colors.white, size: 40),*/
-                    child: ClipOval(
-                      child: Image.network(
-                        userData!['profilePhoto'],
-                        fit: BoxFit.cover,
-                        width: 80,
-                        height: 80,
-                        errorBuilder: (context, error, stackTrace) => const Icon(Icons.person, color: Colors.white, size: 40),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: constraints.maxWidth > 600 ? 500 : double.infinity,
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color.fromRGBO(0, 0, 0, 0.2),
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundColor: const Color(0xFFBA68C8),
+                            child: ClipOval(
+                              child: Image.network(
+                                userData!['profilePhoto'],
+                                fit: BoxFit.cover,
+                                width: 80,
+                                height: 80,
+                                errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.person, color: Colors.white, size: 40),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "${userData!['firstName']} ${userData!['lastName']}",
+                            style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            "@${userData!['username']}",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.deepPurpleAccent,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    "${userData!['firstName']} ${userData!['lastName']}",
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepPurple,
+                    const SizedBox(height: 30),
+                    _buildInfoTile("User Name", userData!["username"], Icons.person),
+                    _buildInfoTile(
+                      "Gender",
+                      userData!["gender"]== 'M' ? 'Male':'Female',
+                      userData!["gender"] == 'M' ? Icons.male_outlined : Icons.female_outlined,
                     ),
-                  ),
-                  const SizedBox(height: 5),
-                  Text(
-                    "@${userData!['username']}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.deepPurpleAccent,
+                    _buildInfoTile("Date of Birth", userData!["DOB"], Icons.date_range),
+                    _buildInfoTile("Hex ID", userData!["hexId"], Icons.info_outline),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.remove('loggedInUsername');
+                          Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (_) => const AuthScreen()),
+                                (route) => false,
+                          );
+                        },
+                        icon: const Icon(Icons.logout),
+                        label: const Text("Logout"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.deepPurple,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            _buildInfoTile("User Name", userData!["username"],Icons.password),
-            _buildInfoTile("Gender", userData!["gender"],userData!["gender"]=='M'?Icons.male_outlined:Icons.female_outlined),
-            _buildInfoTile("Date of Birth", userData!["DOB"],Icons.date_range),
-            _buildInfoTile("Hex ID", userData!["hexId"],Icons.info_outline),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () async{
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.remove('loggedInUsername');
-
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const AuthScreen()),
-                        (route) => false,
-                  );
-                },
-                icon: const Icon(Icons.logout),
-                label: const Text("Logout"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ],
                 ),
               ),
-            )
-          ],
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildInfoTile(String title, String value,IconData icon) {
+  Widget _buildInfoTile(String title, String value, IconData icon) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -179,7 +192,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             );
           },
-        ) : null,
+        )
+            : null,
       ),
     );
   }

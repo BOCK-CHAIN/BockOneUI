@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AutomotiveArticleScreen extends StatelessWidget {
-  const AutomotiveArticleScreen({super.key});
+class AutomotiveEV1Screen extends StatelessWidget {
+  const AutomotiveEV1Screen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +9,8 @@ class AutomotiveArticleScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFEBDFF4), // Your background
       appBar: AppBar(
         backgroundColor: const Color(0xFF9C27B0), // Purple variant
-        title: const Text("Bock Automotive", style: TextStyle(color: Colors.white)),
+        title: const Text("Bock Automotive",
+            style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -38,8 +39,9 @@ class AutomotiveArticleScreen extends StatelessWidget {
             const SizedBox(height: 20),
             const Text(
               "Electric vehicles (EVs) are revolutionizing the automotive industry with their eco-friendly performance and sleek innovation. "
-                  "Governments worldwide are supporting EV adoption with incentives, making them more accessible and affordable for everyday consumers.",
-              style: TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
+              "Governments worldwide are supporting EV adoption with incentives, making them more accessible and affordable for everyday consumers.",
+              style:
+                  TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
             ),
             const SizedBox(height: 16),
             const Text(
@@ -53,10 +55,11 @@ class AutomotiveArticleScreen extends StatelessWidget {
             const SizedBox(height: 10),
             const Text(
               "• Reduced emissions help fight climate change.\n"
-                  "• Lower maintenance compared to gasoline vehicles.\n"
-                  "• Continuous improvements in battery tech.\n"
-                  "• Growing global charging infrastructure.",
-              style: TextStyle(fontSize: 16, color: Colors.black87, height: 1.6),
+              "• Lower maintenance compared to gasoline vehicles.\n"
+              "• Continuous improvements in battery tech.\n"
+              "• Growing global charging infrastructure.",
+              style:
+                  TextStyle(fontSize: 16, color: Colors.black87, height: 1.6),
             ),
             const SizedBox(height: 20),
             const Text(
@@ -70,8 +73,9 @@ class AutomotiveArticleScreen extends StatelessWidget {
             const SizedBox(height: 10),
             const Text(
               "As major automakers invest in EV development, we can expect more affordable models, faster charging, and increased driving range. "
-                  "EVs are not just a trend—they're the future of mobility.",
-              style: TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
+              "EVs are not just a trend—they're the future of mobility.",
+              style:
+                  TextStyle(fontSize: 16, color: Colors.black87, height: 1.5),
             ),
             const SizedBox(height: 30),
             Center(
@@ -82,7 +86,8 @@ class AutomotiveArticleScreen extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF9C27B0),
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

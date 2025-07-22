@@ -296,13 +296,19 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
                 if (!isLogin) const SizedBox(height: 20),
 
                 if (!isLogin)
-                  TextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) return 'Enter Gender';
-                      if (value != 'M' && value != 'F') return 'Enter M or F';
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _enteredGender.isEmpty ? null : _enteredGender,
+                    decoration: _inputDecoration("Gender", Icons.wc),
+                    items: const [
+                      DropdownMenuItem(value: 'M', child: Text('Male')),
+                      DropdownMenuItem(value: 'F', child: Text('Female')),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _enteredGender = value!;
+                      });
                     },
-                    decoration: _inputDecoration("Gender (M / F)", Icons.wc),
+                    validator: (value) => value == null || value.isEmpty ? 'Select Gender' : null,
                     onSaved: (value) => _enteredGender = value!,
                   ),
 
