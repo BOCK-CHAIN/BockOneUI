@@ -85,9 +85,9 @@ class BockHealthScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10,),
-          AutomotiveGridItem(title: 'Typhronex 1',height: 200,onTap: (){},),
+          AutomotiveGridItem(title: 'Typhronex',height: 200,onTap: (){},),
           const SizedBox(height: 10,),
-          AutomotiveGridItem(title: 'Typhronex 2',height: 200,onTap: (){},),
+          AutomotiveGridItem(title: 'Pharmaceutical',height: 200,onTap: (){},),
         ],
       ),
     );
@@ -114,9 +114,9 @@ class BockHealthScreen extends StatelessWidget {
               const SizedBox(height: 10,),
               Row(
                 children: [
-                  Expanded(child: AutomotiveGridItem(title: 'Typhronex 1',height: 300,onTap: (){},)),
+                  Expanded(child: AutomotiveGridItem(title: 'Typhronex',height: 300,onTap: (){},)),
                   const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'Typhronex 2',height: 300,onTap: (){},)),
+                  Expanded(child: AutomotiveGridItem(title: 'Pharmaceutical',height: 300,onTap: (){},)),
                 ],
               ),
             ],

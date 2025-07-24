@@ -18,11 +18,17 @@ class AutomotiveGridItem extends StatelessWidget {
     {
       case 'Automotive EV 1': return 'https://storage.googleapis.com/go-to-u-site.appspot.com/news/50546.51170067246.jpg';
       case 'Automotive SPV' : return 'https://www.echelonedge.com/wp-content/uploads/2023/12/5G-Powered-Cars.jpg';
-      case 'Restaurant' : return 'https://static.toiimg.com/thumb/114088891/114088891.jpg?height=746&width=420&resizemode=76&imgsize=123356';
+      case '2/3 Wheeler' : return 'https://cdn.unenvironment.org/s3fs-public/2018-11/2-3wheelers.jpg';
+      case 'Hyperloop' : return 'https://blog.emb.global/wp-content/uploads/2024/01/Hyperloop-and-High-Speed-Travel-Marketing-Implications-696x390.webp';
+      case 'Foods' : return 'https://static.toiimg.com/thumb/114088891/114088891.jpg?height=746&width=420&resizemode=76&imgsize=123356';
       case 'Groceries' : return 'https://www.bankrate.com/2020/08/01170557/How-to-save-money-on-groceries.jpeg?auto=webp&optimize=high&crop=16:9';
       case 'Dining' : return 'https://img.etimg.com/thumb/116863540/116863540.jpg?height=746&width=420&resizemode=76&imgsize=131580';
       case 'Drones' : return 'https://img.freepik.com/premium-photo/innovative-drone-delivery-3d-rendering-with-box-flight-vertical-mobile-wallpaper_795881-33474.jpg';
       case 'Agriculture' : return 'https://www.shutterstock.com/image-photo/lush-rice-paddy-field-neat-600nw-2499404003.jpg';
+      case 'BSCR' : return 'https://media.cnn.com/api/v1/images/stellar/prod/200729120845-us-space-rocket-center-restricted.jpg?q=w_3000,h_2000,x_0,y_0,c_fill';
+      case 'BSCS' : return 'https://www.nasa.gov/wp-content/uploads/2020/11/iss-7.jpg';
+      case 'BSCM' : return 'https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/4f/6e/67/caption.jpg?w=900&h=500&s=1';
+      case 'BICRT' : return 'https://image-static.collegedunia.com/public/college_data/images/campusimage/1422856449a3.jpg';
       case 'Inertia Nano' : return 'https://i0.wp.com/spacenews.com/wp-content/uploads/2024/01/latitude-zephyr.jpg?fit=2000%2C1125&ssl=1';
       case 'Inertia' : return 'https://www.kdcresource.com/media/chnjtv1y/falcon-9-reusable-rocket.jpg';
       case 'Inertia Mega' : return 'https://i.ytimg.com/vi/P-xiWn4n8JE/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDxEh2aEeNUpibP5MbFmOO_mqmK_w';
@@ -35,8 +41,8 @@ class AutomotiveGridItem extends StatelessWidget {
       case 'Quantum Computers' : return 'https://cdn.mos.cms.futurecdn.net/CBcmkyZ8v4tAc8PSDcEgvM.jpg';
       case 'Eira' : return 'https://nextgeninvent.com/wp-content/uploads/2024/03/Use-Cases-of-Generative-AI-in-Healthcare.png';
       case 'Autonomous Hospital' : return 'https://advinhealthcare.com/wp-content/uploads/2022/12/Types-of-Hospitals-1-1024x683.jpg';
-      case 'Typhronex 1' : return 'https://imageio.forbes.com/blogs-images/sap/files/2017/08/shutterstock_626404406.jpg?height=474&width=711&fit=bounds';
-      case 'Typhronex 2' : return 'https://imageio.forbes.com/specials-images/imageserve/628b8de7a18d8436b8782e88/0x0.jpg?format=jpg&height=600&width=1200&fit=bounds';
+      case 'Typhronex' : return 'https://imageio.forbes.com/blogs-images/sap/files/2017/08/shutterstock_626404406.jpg?height=474&width=711&fit=bounds';
+      case 'Pharmaceutical' : return 'https://imageio.forbes.com/specials-images/imageserve/628b8de7a18d8436b8782e88/0x0.jpg?format=jpg&height=600&width=1200&fit=bounds';
       case 'Krysonix' : return 'https://restream.io/blog/content/images/size/w1200/2023/02/streaming-setup-for-beginners.jpg';
       case 'Xorvane' : return 'https://office-setup-ca.com/wp-content/uploads/2023/12/Business-Management.webp';
       case 'Hynorvixx' : return 'https://www.siteuptime.com/blog/wp-content/uploads/2021/05/66b601ba8958136c5df4882da6d62a85.jpeg';
@@ -50,6 +56,7 @@ class AutomotiveGridItem extends StatelessWidget {
       case 'Air Force' : return 'https://www.eurokidsindia.com/blog/wp-content/uploads/2023/10/indian-air-force-day-870x570.jpg';
       case 'Navy' : return 'https://globalaffairs.org/sites/default/files/styles/wide_lrg/public/2020-11/credit-us-navy-01.jpg?h=d8d1fca9&itok=dOKU6Lgq';
       case 'Army' : return 'https://images.unsplash.com/photo-1522735856-4f1dc00fb0f0?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8YXJteSUyMHNvbGRpZXJ8ZW58MHx8MHx8fDA%3D';
+      case 'Secret Services' : return 'https://m.media-amazon.com/images/S/pv-target-images/71271ff40b32ff9489fac5776817113605bfea1b3b80aa774a21126d373351d5._SX1080_FMjpg_.jpg';
     }
     return 'https://storage.googleapis.com/go-to-u-site.appspot.com/news/50546.51170067246.jpg';
   }

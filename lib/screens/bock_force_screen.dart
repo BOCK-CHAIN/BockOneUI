@@ -13,11 +13,13 @@ class BockForceScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutomotiveGridItem(title: 'Air Force',height: 200,onTap: (){},),
+          AutomotiveGridItem(title: 'Air Force',height: 150,onTap: (){},),
           const SizedBox(height: 10,),
-          AutomotiveGridItem(title: 'Navy',height: 200,onTap: (){},),
+          AutomotiveGridItem(title: 'Navy',height: 150,onTap: (){},),
           const SizedBox(height: 10,),
-          AutomotiveGridItem(title: 'Army',height: 200,onTap: (){},),
+          AutomotiveGridItem(title: 'Army',height: 150,onTap: (){},),
+          const SizedBox(height: 10,),
+          AutomotiveGridItem(title: 'Secret Services',height: 150,onTap: (){},),
         ],
       ),
     );
@@ -32,6 +34,8 @@ class BockForceScreen extends StatelessWidget {
             Expanded(child: AutomotiveGridItem(title: 'Navy',height: MediaQuery.of(context).size.height,onTap: (){},)),
             const SizedBox(width: 20,),
             Expanded(child: AutomotiveGridItem(title: 'Army',height: MediaQuery.of(context).size.height,onTap: (){},)),
+            const SizedBox(width: 20,),
+            Expanded(child: AutomotiveGridItem(title: 'Secret Services',height: MediaQuery.of(context).size.height,onTap: (){},)),
           ],
         ),
       );

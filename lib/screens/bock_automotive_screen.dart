@@ -15,9 +15,13 @@ class BockAutomotiveScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AutomotiveGridItem(title: 'Automotive EV 1',height: 300,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveEV1Screen()));},),
-          const SizedBox(height: 20,),
-          AutomotiveGridItem(title: 'Automotive SPV',height: 300,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveSPVScreen()));},),
+          AutomotiveGridItem(title: 'Automotive EV 1',height: 150,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveEV1Screen()));},),
+          const SizedBox(height: 10,),
+          AutomotiveGridItem(title: 'Automotive SPV',height: 150,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveSPVScreen()));},),
+          const SizedBox(height: 10,),
+          AutomotiveGridItem(title: '2/3 Wheeler',height: 150,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveEV1Screen()));},),
+          const SizedBox(height: 10,),
+          AutomotiveGridItem(title: 'Hyperloop',height: 150,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveSPVScreen()));},),
         ],
       ),
     );
@@ -25,11 +29,23 @@ class BockAutomotiveScreen extends StatelessWidget {
     if (screenWidth > 1200) {
       content=Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Row(
+        child: Column(
           children: [
-            Expanded(child: AutomotiveGridItem(title: 'Automotive EV 1',height: MediaQuery.of(context).size.height,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveEV1Screen()));},)),
-            const SizedBox(width: 20,),
-            Expanded(child: AutomotiveGridItem(title: 'Automotive SPV',height: MediaQuery.of(context).size.height,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveSPVScreen()));},)),
+            Row(
+              children: [
+                Expanded(child: AutomotiveGridItem(title: 'Automotive EV 1',height: 300,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveEV1Screen()));},)),
+                const SizedBox(width: 20,),
+                Expanded(child: AutomotiveGridItem(title: 'Automotive SPV',height: 300,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveSPVScreen()));},)),
+              ],
+            ),
+            const SizedBox(height: 10,),
+            Row(
+              children: [
+                Expanded(child: AutomotiveGridItem(title: '2/3 Wheeler',height: 300,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveEV1Screen()));},)),
+                const SizedBox(width: 20,),
+                Expanded(child: AutomotiveGridItem(title: 'Hyperloop',height: 300,onTap: (){Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const AutomotiveSPVScreen()));},)),
+              ],
+            ),
           ],
         ),
       );

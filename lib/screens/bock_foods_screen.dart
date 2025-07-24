@@ -15,7 +15,7 @@ class BockFoodsScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: AutomotiveGridItem(title: 'Restaurant',height: 200,onTap: (){},)),
+              Expanded(child: AutomotiveGridItem(title: 'Foods',height: 200,onTap: (){},)),
               const SizedBox(width: 10,),
               Expanded(child: AutomotiveGridItem(title: 'Groceries',height: 200,onTap: (){},)),
             ],
@@ -39,7 +39,7 @@ class BockFoodsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20.0),
         child: Row(
           children: [
-            Expanded(child: AutomotiveGridItem(title: 'Restaurant',height: MediaQuery.of(context).size.height,onTap: (){},)),
+            Expanded(child: AutomotiveGridItem(title: 'Foods',height: MediaQuery.of(context).size.height,onTap: (){},)),
             const SizedBox(width: 20,),
             Expanded(child: AutomotiveGridItem(title: 'Groceries',height: MediaQuery.of(context).size.height,onTap: (){},)),
             const SizedBox(width: 20,),
