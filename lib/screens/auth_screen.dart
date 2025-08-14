@@ -1,14 +1,16 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/widgets/image_picker.dart';
 import 'package:trial/services/generating_hex_id.dart';
 import 'package:date_time_format/date_time_format.dart';
 import 'package:trial/screens/forgot_password_screen.dart';
 import 'package:trial/screens/home_screen.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 
 class AuthScreen extends StatefulWidget {
@@ -61,7 +63,7 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     imageUrl=image;
   }
 
-  void authenticate() async {
+  /*void authenticate() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
@@ -155,7 +157,7 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       );
     }
 
-    /*try {
+    *//*try {
       if (isLogin) {
         await _firebase.signInWithEmailAndPassword(
             email: _enteredEmailID, password: _enteredPassword);
@@ -181,7 +183,94 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(error.message ?? "Authentication Failed")),
       );
-    }*/
+    }*//*
+  }*/
+
+  Future<String> getBaseUrl() async {
+    if (kIsWeb) {
+      // Accessing from browser (Flutter Web)
+      return 'http://192.168.29.176:3000'; // Replace with your PC IP
+    }
+
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.isPhysicalDevice) {
+        return 'http://192.168.29.176:3000'; // Real device
+      } else {
+        return 'http://10.0.2.2:3000'; // Emulator
+      }
+    } else {
+      return 'http://192.168.29.176:3000'; // iOS or web
+    }
+  }
+
+  void authenticate() async {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
+
+    final baseUrl = await getBaseUrl();
+    final apiUrl = isLogin
+        ? '$baseUrl/api/auth/login'
+        : '$baseUrl/api/auth/signup';
+
+    String profilePhotoUrl = '';
+
+    if (!isLogin) {
+      if (imageUrl == null) {
+        _showError('Please upload an image.');
+        return;
+      }
+
+      // Cloudinary Upload
+      const cloudName = 'derbo820u';
+      const uploadPreset = 'bockOne';
+      final url = Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
+      final imageRequest = http.MultipartRequest('POST', url)
+        ..fields['upload_preset'] = uploadPreset
+        ..files.add(await http.MultipartFile.fromPath('file', imageUrl!.path));
+      final imageResponse = await imageRequest.send();
+      final resStream = await imageResponse.stream.bytesToString();
+      final resData = jsonDecode(resStream);
+      profilePhotoUrl = resData['secure_url'];
+    }
+
+    final requestBody = isLogin
+        ? {
+      'username': _enteredUserName,
+      'password': _enteredPassword,
+    }
+        : {
+      'username': _enteredUserName,
+      'password': _enteredPassword,
+      'firstName': _enteredFirstName,
+      'lastName': _enteredLastName,
+      'dob': _dateController.text,
+      'gender': _enteredGender,
+      'hexId': generateHexId(
+          _enteredUserName, _enteredPassword, _enteredFirstName, _enteredLastName, _dateController.text, _enteredGender),
+      'profilePhoto': profilePhotoUrl,
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    final responseData = jsonDecode(response.body);
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      _showError(responseData['error'] ?? 'Something went wrong');
+      return;
+    }
+
+    // Save to shared prefs
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('loggedInUsername', _enteredUserName);
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => HomeScreen(userName: _enteredUserName)),
+    );
   }
 
   void _showError(String message) {

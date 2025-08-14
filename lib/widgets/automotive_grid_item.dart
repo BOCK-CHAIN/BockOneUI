@@ -36,9 +36,12 @@ class AutomotiveGridItem extends StatelessWidget {
       case 'Fully Reusable Rocket' : return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ21qUXZ5p27o0czfQ03A9sKQiet73jXlwrw&s';
       case 'Orventus' : return 'https://irp.cdn-website.com/2b9cb2fc/dms3rep/multi/Depositphotos_2111331_S.jpg';
       case 'BAVT' : return 'https://images.ansys.com/is/image/ansys/iot-autonomous-vehicle-electrification-high-tech?wid=880&fmt=webp&op_usm=0.9,1.0,20,0&fit=constrain,0';
-      case 'Zeyon X90' : return 'https://static1.xdaimages.com/wordpress/wp-content/uploads/wm/2024/01/msi-gpus-8.jpg';
+      case 'Zeyon' : return 'https://www.icdrex.com/wp-content/uploads/2025/04/Introduction-to-semiconductors.png';
+      case 'Zeyon G90' : return 'https://media.geeksforgeeks.org/wp-content/uploads/20240607155215/5126124-300.jpg';
+      case 'Zeyon C90' : return 'https://static1.xdaimages.com/wordpress/wp-content/uploads/wm/2024/01/msi-gpus-8.jpg';
+      case 'Zeyon QSC90' : return 'https://cdn.mos.cms.futurecdn.net/CBcmkyZ8v4tAc8PSDcEgvM.jpg';
+      case 'Zeyon QPH90' : return 'https://planetmainframe.com/wp-content/uploads/2023/08/Quantum-Computer.jpg';
       case 'CPU' : return 'https://media.geeksforgeeks.org/wp-content/uploads/20240607155215/5126124-300.jpg';
-      case 'Quantum Computers' : return 'https://cdn.mos.cms.futurecdn.net/CBcmkyZ8v4tAc8PSDcEgvM.jpg';
       case 'Eira' : return 'https://nextgeninvent.com/wp-content/uploads/2024/03/Use-Cases-of-Generative-AI-in-Healthcare.png';
       case 'Autonomous Hospital' : return 'https://advinhealthcare.com/wp-content/uploads/2022/12/Types-of-Hospitals-1-1024x683.jpg';
       case 'Typhronex' : return 'https://imageio.forbes.com/blogs-images/sap/files/2017/08/shutterstock_626404406.jpg?height=474&width=711&fit=bounds';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trial/screens/zeyon_screen.dart';
 import 'package:trial/widgets/automotive_grid_item.dart';
 
 class BockAIScreen extends StatelessWidget {
@@ -13,19 +14,14 @@ class BockAIScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(child: AutomotiveGridItem(title: 'Orventus',height: 150,onTap: (){},)),
-              const SizedBox(width: 10,),
-              Expanded(child: AutomotiveGridItem(title: 'BAVT',height: 150,onTap: (){},)),
-            ],
-          ),
           const SizedBox(height: 10,),
-          AutomotiveGridItem(title: 'Zeyon X90',height: 150,onTap: (){},),
+          AutomotiveGridItem(title: 'Orventus',height: 200,onTap: (){},),
           const SizedBox(height: 10,),
-          AutomotiveGridItem(title: 'CPU',height: 150,onTap: (){},),
+          AutomotiveGridItem(title: 'BAVT',height: 200,onTap: (){},),
           const SizedBox(height: 10,),
-          AutomotiveGridItem(title: 'Quantum Computers',height: 150,onTap: (){},),
+          AutomotiveGridItem(title: 'Zeyon',height: 200,onTap: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const ZeyonScreen()));
+          },),
         ],
       ),
     );
@@ -38,19 +34,11 @@ class BockAIScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Expanded(child: AutomotiveGridItem(title: 'Orventus',height: 300,onTap: (){},)),
+                  Expanded(child: AutomotiveGridItem(title: 'Orventus',height: MediaQuery.of(context).size.height,onTap: (){},)),
                   const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'BAVT',height: 300,onTap: (){},)),
+                  Expanded(child: AutomotiveGridItem(title: 'BAVT',height: MediaQuery.of(context).size.height,onTap: (){},)),
                   const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'Zeyon X90',height: 300,onTap: (){},)),
-                ],
-              ),
-              const SizedBox(height: 10,),
-              Row(
-                children: [
-                  Expanded(child: AutomotiveGridItem(title: 'CPU',height: 300,onTap: (){},)),
-                  const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'Quantum Computers',height: 300,onTap: (){},)),
+                  Expanded(child: AutomotiveGridItem(title: 'Zeyon X90',height: MediaQuery.of(context).size.height,onTap: (){},)),
                 ],
               ),
             ],

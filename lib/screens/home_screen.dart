@@ -10,10 +10,15 @@ import 'package:trial/screens/bock_space_screen.dart';
 import 'package:trial/screens/profile_screen.dart';
 import 'package:trial/widgets/home_screen_grid_item.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.userName});
-  final String userName;
+class HomeScreen extends StatefulWidget {
+  HomeScreen({super.key, required this.userName});
+  String userName;
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -29,6 +34,7 @@ class HomeScreen extends StatelessWidget {
       if (screenWidth > 1200) return 1.2; // Compact aspect ratio for web
       return 1.1; // Normal for mobile
     }
+
     return Scaffold(
       backgroundColor: const Color(0xFFEBDFF4),
       body: SafeArea(
@@ -51,10 +57,16 @@ class HomeScreen extends StatelessWidget {
                   ),
                   IconButton(
                     icon: const Icon(Icons.person_outline, color: Color(0xFF6A1B9A)),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ProfileScreen(username: userName)),
+                    onPressed: () async{
+                      final updated = await Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => ProfileScreen(username: widget.userName)),
                       );
+
+                      if (updated is String && updated != widget.userName) {
+                        setState(() {
+                          widget.userName= updated; // update locally
+                        });
+                      }
                     },
                   ),
                 ],

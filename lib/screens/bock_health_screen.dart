@@ -1,7 +1,3 @@
-//import 'package:device_apps/device_apps.dart';
-//import 'package:url_launcher/url_launcher.dart';
-//import 'package:android_intent_plus/android_intent.dart';
-//import 'package:android_intent_plus/flag.dart';
 import 'package:flutter/material.dart';
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:trial/widgets/automotive_grid_item.dart';
@@ -78,6 +74,9 @@ class BockHealthScreen extends StatelessWidget {
                   title: 'Eira',
                   height: 200,
                   onTap: launchExternalApp,
+                  /*onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const EiraApp()));
+                  },*/
                 ),
               ),
               const SizedBox(width: 10,),

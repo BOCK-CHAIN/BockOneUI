@@ -1,11 +1,13 @@
-// All imports remain unchanged
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:date_time_format/date_time_format.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/widgets/image_picker.dart';
+import 'dart:convert';
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
+//import 'package:date_time_format/date_time_format.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final String username;
@@ -28,8 +30,6 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
   String profilePhoto = '';
   File? imageUrl;
 
-  DocumentReference? _userDocRef;
-
   late AnimationController _fadeController;
   late Animation<double> _fadeAnimation;
 
@@ -46,31 +46,57 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
     _loadUserData();
   }
 
-  Future<void> _loadUserData() async {
-    final usersCollection = FirebaseFirestore.instance.collection('users');
-    final snapshot = await usersCollection
-        .where('username', isEqualTo: widget.username)
-        .limit(1)
-        .get();
-
-    if (snapshot.docs.isEmpty) {
-      _showError("User not found!");
-      return;
+  Future<String> getBaseUrl() async {
+    if (kIsWeb) {
+      // Accessing from browser (Flutter Web)
+      return 'http://192.168.29.176:3000'; // Replace with your PC IP
     }
 
-    final userDoc = snapshot.docs.first;
-    _originalData = userDoc.data();
-    _userDocRef = userDoc.reference;
+    if (Platform.isAndroid) {
+      final androidInfo = await DeviceInfoPlugin().androidInfo;
+      if (androidInfo.isPhysicalDevice) {
+        return 'http://192.168.29.176:3000'; // Real device
+      } else {
+        return 'http://10.0.2.2:3000'; // Emulator
+      }
+    } else {
+      return 'http://192.168.29.176:3000'; // iOS or web
+    }
+  }
 
-    setState(() {
-      _enteredUserName = _originalData['username'] ?? '';
-      _enteredPassword = _originalData['password'] ?? '';
-      _enteredFirstName = _originalData['firstName'] ?? '';
-      _enteredLastName = _originalData['lastName'] ?? '';
-      _enteredGender = _originalData['gender'] ?? '';
-      profilePhoto = _originalData['profilePhoto'] ?? '';
-      _dateController.text = _originalData['DOB'] ?? '';
-    });
+  Future<void> _loadUserData() async {
+    try {
+      final baseUrl = await getBaseUrl();
+      final url = Uri.parse('$baseUrl/api/profile/${widget.username}');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        final userData = jsonDecode(response.body);
+
+        setState(() {
+          _originalData = userData;
+          _enteredUserName = userData['username'] ?? '';
+          _enteredPassword = userData['password'] ?? '';
+          _enteredFirstName = userData['first_name'] ?? '';
+          _enteredLastName = userData['last_name'] ?? '';
+          _enteredGender = userData['gender'] ?? '';
+          profilePhoto = userData['profile_photo'] ?? '';
+          final rawDob = userData['dob'];
+          if (rawDob != null && rawDob.isNotEmpty) {
+            try {
+              final parsedDob = DateTime.parse(rawDob).toLocal(); // ✅ FIXED
+              _dateController.text = DateFormat('d MMM yy').format(parsedDob);
+            } catch (e) {
+              print("Date parse error: $e");
+            }
+          }
+        });
+      } else {
+        _showError("User not found!");
+      }
+    } catch (e) {
+      _showError("Failed to fetch data: $e");
+    }
   }
 
   void getImageUrl(File image) {
@@ -83,12 +109,24 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
 
     final Map<String, dynamic> updatedFields = {};
 
-    if (_enteredFirstName != _originalData['firstName']) updatedFields['firstName'] = _enteredFirstName;
-    if (_enteredLastName != _originalData['lastName']) updatedFields['lastName'] = _enteredLastName;
-    if (_enteredUserName != _originalData['username']) updatedFields['username'] = _enteredUserName;
+    if (_enteredUserName != _originalData['username']) {updatedFields['username'] = _enteredUserName;}
+    if (_enteredFirstName != _originalData['first_name']) updatedFields['firstName'] = _enteredFirstName;
+    if (_enteredLastName != _originalData['last_name']) updatedFields['lastName'] = _enteredLastName;
     if (_enteredPassword != _originalData['password']) updatedFields['password'] = _enteredPassword;
     if (_enteredGender != _originalData['gender']) updatedFields['gender'] = _enteredGender;
-    if (_dateController.text != _originalData['DOB']) updatedFields['DOB'] = _dateController.text;
+    final originalDobStr = _originalData['dob'];
+    DateTime? originalDob = DateTime.tryParse(originalDobStr ?? '');
+
+    if (originalDob == null || _dateController.text != DateFormat('d MMM yy').format(originalDob)) {
+      try {
+        final parsed = DateFormat('d MMM yy').parse(_dateController.text);
+        updatedFields['dob'] = parsed.toIso8601String().split('T').first;
+      } catch (e) {
+        _showError("Invalid date format. Use format: 24 Jul 25");
+        return;
+      }
+    }
+
 
     if (imageUrl != null) {
       const cloudName = 'derbo820u';
@@ -106,11 +144,29 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
       }
     }
 
-    if (updatedFields.isNotEmpty && _userDocRef != null) {
-      await _userDocRef!.update(updatedFields);
-    }
+    if (updatedFields.isNotEmpty) {
+      try {
+        final baseUrl = await getBaseUrl();
+        final url = Uri.parse('$baseUrl/api/profile/${_originalData['username']}');
+        final response = await http.put(
+          url,
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(updatedFields),
+        );
 
-    Navigator.pop(context);
+        if (response.statusCode == 200) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('loggedInUsername', _enteredUserName);
+          Navigator.of(context).pop(_enteredUserName);
+        } else {
+          _showError("Update failed: ${response.body}");
+        }
+      } catch (e) {
+        _showError("Error updating profile: $e");
+      }
+    } else {
+      Navigator.pop(context); // No changes, just pop
+    }
   }
 
   void _showError(String message) {
@@ -209,13 +265,13 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
                               lastDate: DateTime.now(),
                             );
                             if (pickedDate != null) {
-                              _dateController.text = pickedDate.format('j M y');
+                              _dateController.text = DateFormat('d MMM yy').format(pickedDate);
                             }
                           },
                         ),
                         const SizedBox(height: 20),
                         DropdownButtonFormField<String>(
-                          value: _enteredGender.isNotEmpty ? _enteredGender : null,
+                          value: ['M', 'F'].contains(_enteredGender) ? _enteredGender : null,
                           items: const [
                             DropdownMenuItem(value: 'M', child: Text('Male')),
                             DropdownMenuItem(value: 'F', child: Text('Female')),
@@ -229,11 +285,9 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
                           validator: (value) => value == null || value.isEmpty ? 'Select Gender' : null,
                           decoration: _inputDecoration("Gender", Icons.wc),
                         ),
-
                         const SizedBox(height: 20),
                         TextFormField(
                           initialValue: _enteredUserName,
-                          validator: (val) => val!.length < 4 ? "Min 4 chars" : null,
                           onSaved: (value) => _enteredUserName = value!,
                           decoration: _inputDecoration("Username", Icons.account_circle),
                         ),

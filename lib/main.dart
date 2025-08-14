@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/screens/auth_screen.dart';
 import 'package:trial/screens/home_screen.dart';
-import 'firebase_options.dart';
+import 'package:trial/firebase_options.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

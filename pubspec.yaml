@@ -45,10 +45,30 @@ dependencies:
   image_picker: ^1.1.2
   shared_preferences: ^2.5.3
   flutter_launcher_icons: ^0.14.4
-  device_apps: ^2.2.0
   url_launcher: ^6.3.2
-  android_intent_plus: ^5.3.0
   external_app_launcher: ^4.0.3
+  intl: ^0.20.2
+  flutter_svg: ^2.2.0
+  file_picker: ^10.2.0
+  path_provider: ^2.1.5
+  camera: ^0.10.1
+  permission_handler: ^12.0.1
+  video_player: ^2.10.0
+  dio: ^5.8.0+1
+  flutter_sound: ^9.28.0
+  speech_to_text: ^6.3.0
+  device_info_plus: ^11.5.0
+  record: ^6.0.0
+#  speech_to_text: ^6.6.2
+#  flutter_svg: ^2.2.0
+#  file_picker: ^10.2.0
+#  path_provider: ^2.1.5
+#  camera: ^0.11.2
+#  permission_handler: ^12.0.1
+#  video_player: ^2.10.0
+#  dio: ^5.8.0+1
+#  speech_to_text: ^7.2.0
+#  flutter_sound: ^9.28.0
 
 dev_dependencies:
   flutter_test:
@@ -80,13 +100,6 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/images/car_automotive.png
-    - assets/images/drone_foods.jpg
-    - assets/images/rocket_space.png
-    - assets/images/robot_ai.png
-    - assets/images/hospital_health.png
-    - assets/images/money_chain.jpg
-    - assets/images/building_institutes.jpg
     - assets/images/health.png
     - assets/images/automotive.png
     - assets/images/foods.png
@@ -95,9 +108,14 @@ flutter:
     - assets/images/space.png
     - assets/images/institutes.png
     - assets/images/force.png
+    - assets/images/Krysonix.png
+    - assets/images/Eira.png
     - assets/icons/BOCK.png
     - assets/icons/foreground.png
     - assets/icons/background.png
+    - assets/images/Eira 0.1.png
+    - assets/images/Eira 0.2.png
+    - assets/images/Eira 1.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

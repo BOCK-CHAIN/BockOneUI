@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trial/screens/krysonix/krysonix_auth_screen.dart';
 import 'package:trial/widgets/automotive_grid_item.dart';
 
 class BockChainScreen extends StatelessWidget {
@@ -15,7 +16,9 @@ class BockChainScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              Expanded(child: AutomotiveGridItem(title: 'Krysonix',height: 150,onTap: (){},)),
+              Expanded(child: AutomotiveGridItem(title: 'Krysonix',height: 150,onTap: (){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const KrysonixAuthScreen()));
+              },)),
               const SizedBox(width: 10,),
               Expanded(child: AutomotiveGridItem(title: 'Xorvane',height: 150,onTap: (){},)),
             ],
