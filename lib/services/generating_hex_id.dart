@@ -14,4 +14,3 @@ String generateHexId(String email, String password,String firstName,String lastN
 
   return hexId;
 }
-
