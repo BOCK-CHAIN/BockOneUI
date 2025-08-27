@@ -46,7 +46,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://192.168.29.176:3000'; // Replace with your PC IP
+      return 'http://3.7.70.127:3000'; // Replace with your PC IP
     }
 
     if (Platform.isAndroid) {
