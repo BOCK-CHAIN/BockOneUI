@@ -29,35 +29,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     fetchUserData();
   }
 
-  /*Future<void> fetchUserData() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection("users")
-        .where("username", isEqualTo: widget.username)
-        .limit(1)
-        .get();
-
-    if (snapshot.docs.isNotEmpty) {
-      setState(() {
-        userData = snapshot.docs.first.data();
-      });
-    }
-  }*/
-
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://3.7.70.127:3000'; // Replace with your PC IP
+      return 'http://3.109.55.254:3000'; // Replace with your PC IP
     }
 
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.isPhysicalDevice) {
-        return 'http://192.168.29.176:3000'; // Real device
+        return 'http://3.109.55.254:3000'; // Real device
       } else {
-        return 'http://10.0.2.2:3000'; // Emulator
+        return 'http://3.109.55.254:3000'; // Emulator
       }
     } else {
-      return 'http://192.168.29.176:3000'; // iOS or web
+      return 'http://3.109.55.254:3000'; // iOS or web
     }
   }
 

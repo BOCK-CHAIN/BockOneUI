@@ -66,18 +66,18 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://13.201.93.105:3000'; // Replace with your PC IP
+      return 'http://3.109.55.254:3000'; // Replace with your PC IP
     }
 
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.isPhysicalDevice) {
-        return 'http://192.168.29.176:3000'; // Real device
+        return 'http://3.109.55.254:3000'; // Real device
       } else {
-        return 'http://10.0.2.2:3000'; // Emulator
+        return 'http://3.109.55.254:3000'; // Emulator
       }
     } else {
-      return 'http://192.168.29.176:3000'; // iOS or web
+      return 'http://3.109.55.254:3000'; // iOS or web
     }
   }
 
@@ -98,17 +98,23 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
         return;
       }
 
-      // Cloudinary Upload
-      const cloudName = 'derbo820u';
-      const uploadPreset = 'bockOne';
-      final url = Uri.parse('https://api.cloudinary.com/v1_1/$cloudName/image/upload');
-      final imageRequest = http.MultipartRequest('POST', url)
-        ..fields['upload_preset'] = uploadPreset
-        ..files.add(await http.MultipartFile.fromPath('file', imageUrl!.path));
-      final imageResponse = await imageRequest.send();
-      final resStream = await imageResponse.stream.bytesToString();
-      final resData = jsonDecode(resStream);
-      profilePhotoUrl = resData['secure_url'];
+      final uploadRequest = http.MultipartRequest(
+        'POST',
+        Uri.parse('$baseUrl/api/auth/upload-photo'),
+      )
+        ..files.add(
+            await http.MultipartFile.fromPath('profilePhoto', imageUrl!.path));
+
+      final uploadResponse = await uploadRequest.send();
+      final uploadResStr = await uploadResponse.stream.bytesToString();
+      final uploadResData = jsonDecode(uploadResStr);
+
+      if (uploadResponse.statusCode != 200) {
+        _showError(uploadResData['error'] ?? 'Image upload failed');
+        return;
+      }
+
+      profilePhotoUrl = uploadResData['imageUrl'];
     }
 
     final requestBody = isLogin
@@ -156,13 +162,6 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.redAccent,
     ));
   }
-
-  /*String? validateEmail(String? value) {
-    if (value == null || value.isEmpty) return "Email can't be empty";
-    final emailRegex = RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) return "Enter a valid email";
-    return null;
-  }*/
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) return "Password can't be empty";

@@ -339,7 +339,7 @@ const privacyPolicy = {
         },
         {
           "subtitle": "User Responsibility",
-          "content": "Despite our efforts, no online platform is 100% secure. Users should take precautions such as using strong passwords and enabling privacy settings.",
+          "bullets": ["Despite our efforts, no online platform is 100% secure. Users should take precautions such as using strong passwords and enabling privacy settings.",]
         },
       ],
     },
@@ -356,7 +356,7 @@ const privacyPolicy = {
         },
         {
           "subtitle": "Managing Cookies",
-          "content": "Users can disable cookies in browser settings, but some features may not function properly.",
+          "bullets": ["Users can disable cookies in browser settings, but some features may not function properly.",]
         },
       ],
     },
@@ -373,7 +373,7 @@ const privacyPolicy = {
         },
         {
           "subtitle": "Account Deletion",
-          "content": "Users may request account deletion, but certain records (e.g., payment history, copyright claims) may be retained for legal compliance.",
+          "bullets": ["Users may request account deletion, but certain records (e.g., payment history, copyright claims) may be retained for legal compliance.",]
         },
       ],
     },
@@ -389,15 +389,15 @@ const privacyPolicy = {
         },
         {
           "subtitle": "Data Portability",
-          "content": "Download their content and metadata before closing an account.",
+          "bullets": ["Download their content and metadata before closing an account.",]
         },
         {
           "subtitle": "Withdraw Consent",
-          "content": "Opt out of personalized advertising and tracking (may affect monetization).",
+          "bullets": ["Opt out of personalized advertising and tracking (may affect monetization).",]
         },
         {
           "subtitle": "Account Deletion",
-          "content": "Request permanent deletion of their Bock Krysonix account.",
+          "bullets": ["Request permanent deletion of their Bock Krysonix account.",]
         },
       ],
     },
@@ -406,7 +406,7 @@ const privacyPolicy = {
       "subsections": [
         {
           "subtitle": "Data Transfer Policy",
-          "content": "If you access Bock Krysonix from outside India, your data may be transferred, stored, and processed in accordance with Indian data protection laws.",
+          "bullets": ["If you access Bock Krysonix from outside India, your data may be transferred, stored, and processed in accordance with Indian data protection laws.",]
         },
       ],
     },
@@ -415,7 +415,7 @@ const privacyPolicy = {
       "subsections": [
         {
           "subtitle": "Policy Updates",
-          "content": "Octakaigon Bock Private Limited reserves the right to update this policy. Major changes will be notified via email or website alerts. Users should review this policy periodically to stay informed.",
+          "bullets": ["Octakaigon Bock Private Limited reserves the right to update this policy. Major changes will be notified via email or website alerts. Users should review this policy periodically to stay informed.",]
         },
       ],
     },
@@ -632,4 +632,97 @@ const refundAndCancellation = {
       ],
     },
   ],
+};
+
+const contactUs = {
+  "lastUpdated": "20/02/2025",
+  "introduction":
+  "Welcome to Bock Krysonix, a streaming platform operated by OCTAKAIGON BOCK PRIVATE LIMITED, under the Bock Chain initiative. We value your feedback, inquiries, and concerns. Whether you need assistance with your subscription, premium content purchase, advertising services, or technical support, we are here to help. Below, you’ll find various ways to get in touch with us, along with details about our support hours and escalation procedures.",
+  "sections": {
+    "generalInquiries": {
+      "description":
+      "If you have general questions about Bock Krysonix’s streaming services, content policies, partnerships, or business inquiries, you can reach us via:",
+      "email": "bock.infos@gmail.com",
+      "phone": "+91 6360288456",
+      "officeAddress":
+      "BOCK (Head Office, CMRIT), Incubation Center, CMRIT College, AECS Layout - A Block, Kundalahalli Colony, Brookefield, Bengaluru, Karnataka 560037",
+      "businessHours": "Monday - Friday, 9:00 AM - 6:00 PM (IST)",
+      "enterpriseContact":
+      "For business collaborations, content licensing, or media inquiries, please email bock.infos@gmail.com with a detailed proposal or request.",
+    },
+    "customerSupport": {
+      "technicalSupport": {
+        "description":
+        "If you are experiencing issues with video playback, subscriptions, content access, or account security, our technical support team is available to assist you.",
+        "email": "bock.infos@gmail.com",
+        "supportHours":
+        "24/7 for enterprise customers, 9:00 AM - 6:00 PM IST for general users",
+      },
+      "subscriptionBillingSupport": {
+        "description":
+        "For subscription management, payment failures, refunds, or billing inquiries, contact our billing support team via:",
+        "email": "bock.infos@gmail.com",
+        "phone": "+91 6360288456",
+        "selfService":
+        "Users can also access their billing history and invoices through 'My Account' → 'Billing & Payments' on the platform.",
+      },
+    },
+    "creatorAdvertiserSupport": {
+      "creatorSupport": {
+        "description":
+        "If you are a content creator and need assistance with monetization, copyright claims, or audience analytics, please contact our Creator Support Team:",
+        "email": "bock.infos@gmail.com",
+      },
+      "advertiserSupport": {
+        "description":
+        "For assistance with advertising campaigns, sponsorships, and ad placements, contact our Advertising Support Team:",
+        "email": "bock.infos@gmail.com",
+        "phone": "+91 6360288456",
+        "consultations":
+        "Advertisers can also schedule one-on-one consultations with our Ad Account Managers for personalized guidance.",
+      },
+    },
+    "reportingAbuseSecurityIssues": {
+      "securityVulnerability": {
+        "description":
+        "We take cybersecurity and user data protection seriously. If you identify a security vulnerability, data breach, or privacy risk, report it to our Cybersecurity Team:",
+        "email": "bock.infos@gmail.com",
+        "disclosurePolicy":
+        "We encourage responsible disclosure and may offer bug bounty rewards for critical security findings.",
+      },
+      "misuseAbuse": {
+        "description":
+        "If you encounter copyright infringement, hate speech, harassment, spam, or any content that violates Bock Krysonix policies, report it via:",
+        "email": "bock.infos@gmail.com",
+        "inPlatformReporting": "Users can flag videos and comments for review.",
+        "dmcaRequests":
+        "For DMCA takedown requests, submit a request via bock.infos@gmail.com.",
+        "reviewTime":
+        "All reports will be reviewed within 24-72 hours, and appropriate action will be taken.",
+      },
+    },
+    "escalationProcess": {
+      "description":
+      "If your issue is not resolved satisfactorily, you can escalate the matter:",
+      "steps": [
+        "Step 1: Submit an email to the respective department.",
+        "Step 2: If unresolved within 48 hours, reply to the same thread requesting escalation.",
+        "Step 3: If further escalation is needed, contact our Customer Success Manager at bock.infos@gmail.com.",
+      ],
+      "resolutionTimeline":
+      "We strive to resolve all issues within 3-5 business days for general users and 24 hours for premium subscribers, advertisers, and creators.",
+    },
+    "officeLocations": {
+      "headquarters": {
+        "companyName": "OCTAKAIGON BOCK PRIVATE LIMITED",
+        "platformName": "Bock Krysonix",
+        "email": "bock.infos@gmail.com",
+        "phone": "+91 6360288456",
+        "corporateOffice":
+        "BOCK (Head Office, CMRIT), Incubation Center, CMRIT College, AECS Layout - A Block, Kundalahalli Colony, Brookefield, Bengaluru, Karnataka 560037",
+        "registeredOffice":
+        "3rd Cross, Ganesh Temple Rd, Udaya Nagar, Dandramakki, Chikmagalur, Chickmagalur, Chikmagalur, Karnataka, India, 577101",
+      },
+    },
+  },
 };

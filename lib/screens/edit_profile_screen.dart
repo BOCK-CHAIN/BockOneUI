@@ -49,18 +49,18 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://192.168.29.176:3000'; // Replace with your PC IP
+      return 'http://3.109.55.254:3000'; // Replace with your PC IP
     }
 
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.isPhysicalDevice) {
-        return 'http://192.168.29.176:3000'; // Real device
+        return 'http://3.109.55.254:3000'; // Real device
       } else {
-        return 'http://10.0.2.2:3000'; // Emulator
+        return 'http://3.109.55.254:3000'; // Emulator
       }
     } else {
-      return 'http://192.168.29.176:3000'; // iOS or web
+      return 'http://3.109.55.254:3000'; // iOS or web
     }
   }
 
@@ -103,7 +103,7 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
     imageUrl = image;
   }
 
-  Future<void> _saveChanges() async {
+  /*Future<void> _saveChanges() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
@@ -167,7 +167,74 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
     } else {
       Navigator.pop(context); // No changes, just pop
     }
+  }*/
+
+  Future<void> _saveChanges() async {
+    if (!_formKey.currentState!.validate()) return;
+    _formKey.currentState!.save();
+
+    final baseUrl = await getBaseUrl();
+    final url = Uri.parse('$baseUrl/api/profile/${_originalData['username']}');
+
+    // Prepare multipart request
+    var request = http.MultipartRequest('PUT', url);
+
+    // Add changed text fields
+    if (_enteredUserName != _originalData['username']) {
+      request.fields['username'] = _enteredUserName;
+    }
+    if (_enteredFirstName != _originalData['first_name']) {
+      request.fields['firstName'] = _enteredFirstName;
+    }
+    if (_enteredLastName != _originalData['last_name']) {
+      request.fields['lastName'] = _enteredLastName;
+    }
+    if (_enteredPassword != _originalData['password']) {
+      request.fields['password'] = _enteredPassword;
+    }
+    if (_enteredGender != _originalData['gender']) {
+      request.fields['gender'] = _enteredGender;
+    }
+
+    // Handle DOB change
+    final originalDobStr = _originalData['dob'];
+    DateTime? originalDob = DateTime.tryParse(originalDobStr ?? '');
+    if (originalDob == null || _dateController.text != DateFormat('d MMM yy').format(originalDob)) {
+      try {
+        final parsed = DateFormat('d MMM yy').parse(_dateController.text);
+        request.fields['dob'] = parsed.toIso8601String().split('T').first;
+      } catch (e) {
+        _showError("Invalid date format. Use format: 24 Jul 25");
+        return;
+      }
+    }
+
+    // Attach image file if selected
+    if (imageUrl != null) {
+      request.files.add(await http.MultipartFile.fromPath('profilePhoto', imageUrl!.path));
+    }
+
+    try {
+      final response = await request.send();
+
+      if (response.statusCode == 200) {
+        final resBody = await response.stream.bytesToString();
+        final resData = jsonDecode(resBody);
+
+        // Update logged-in username if changed
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('loggedInUsername', _enteredUserName);
+
+        Navigator.of(context).pop(_enteredUserName);
+      } else {
+        final resBody = await response.stream.bytesToString();
+        _showError("Update failed: $resBody");
+      }
+    } catch (e) {
+      _showError("Error updating profile: $e");
+    }
   }
+
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(

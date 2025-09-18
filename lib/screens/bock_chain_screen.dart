@@ -59,7 +59,9 @@ class BockChainScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Expanded(child: AutomotiveGridItem(title: 'Krysonix',height: 300,onTap: (){},)),
+                  Expanded(child: AutomotiveGridItem(title: 'Krysonix',height: 300,onTap:(){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const KrysonixAuthScreen()));
+                  })),
                   const SizedBox(width: 20,),
                   Expanded(child: AutomotiveGridItem(title: 'Xorvane',height: 300,onTap: (){},)),
                   const SizedBox(width: 20,),

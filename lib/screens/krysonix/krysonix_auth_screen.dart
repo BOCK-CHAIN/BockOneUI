@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:trial/screens/krysonix/krysonix_home_screen.dart';
 
 class KrysonixAuthScreen extends StatefulWidget {
@@ -11,6 +14,43 @@ class KrysonixAuthScreen extends StatefulWidget {
 class _KrysonixAuthScreenState extends State<KrysonixAuthScreen> {
   final _hexIdController = TextEditingController();
   final _passwordController = TextEditingController();
+  String _enteredHexID="";
+  String _enteredPassword="";
+
+  void authenticate() async{
+    setState(() {
+      _enteredHexID = _hexIdController.text;
+      _enteredPassword = _passwordController.text;
+    });
+
+    final requestBody ={
+      'hexId': _enteredHexID,
+      'password': _enteredPassword,
+    };
+    const apiUrl = 'http://3.109.55.254:3000/api/auth/krysonixLogin';
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(requestBody),
+    );
+
+    final responseData = jsonDecode(response.body);
+
+    if (response.statusCode != 200 && response.statusCode != 201) {
+      _showError(responseData['error'] ?? 'Something went wrong');
+      return;
+    }
+
+    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> KrysonixHomeScreen(hexId: _enteredHexID,)));
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      backgroundColor: Colors.redAccent,
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,9 +173,7 @@ class _KrysonixAuthScreenState extends State<KrysonixAuthScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const KrysonixHomeScreen()));
-                      },
+                      onPressed: authenticate,
                       child: const Text(
                         "Sign In",
                         style: TextStyle(
