@@ -5,11 +5,12 @@ import 'package:trial/screens/krysonix/krysonix_video_upload_screen.dart';
 import 'package:trial/screens/krysonix/policy_screen.dart';
 
 class KrysonixDrawer extends StatelessWidget {
+  final String hexId;
   final VoidCallback onCreatorStudioTap;
   final VoidCallback onSettingsTap;
   final VoidCallback onProfileTap;
 
-  const KrysonixDrawer({super.key, required this.onCreatorStudioTap, required this.onSettingsTap,  required this.onProfileTap});
+  const KrysonixDrawer({super.key, required this.onCreatorStudioTap, required this.onSettingsTap,  required this.onProfileTap,required this.hexId});
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +19,8 @@ class KrysonixDrawer extends StatelessWidget {
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            //crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // ==== Top Navigation ====
               ListTile(
@@ -50,7 +51,7 @@ class KrysonixDrawer extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const VideoUploadScreen()));
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> VideoUploadScreen(hexId: hexId,)));
                   },
                   icon: const Icon(Icons.upload, color: Colors.white),
                   label: const Text("Upload", style: TextStyle(color: Colors.white)),
@@ -58,6 +59,53 @@ class KrysonixDrawer extends StatelessWidget {
               ),
 
               const SizedBox(height: 20),
+              const Divider(color: Colors.white24),
+
+              ListTile(
+                leading: const Icon(Icons.shopping_bag_outlined, color: Colors.white),
+                title: const Text("Shopping", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),
+              ListTile(
+                leading: const Icon(Icons.music_note_outlined, color: Colors.white),
+                title: const Text("Music", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),
+              ListTile(
+                leading: const Icon(Icons.movie_creation_outlined, color: Colors.white),
+                title: const Text("Movies", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),ListTile(
+                leading: const Icon(Icons.gamepad_outlined, color: Colors.white),
+                title: const Text("Gaming", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),
+              ListTile(
+                leading: const Icon(Icons.newspaper, color: Colors.white),
+                title: const Text("News", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),ListTile(
+                leading: const Icon(Icons.sports_baseball_outlined, color: Colors.white),
+                title: const Text("Sports", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),
+              ListTile(
+                leading: const Icon(Icons.leaderboard_outlined, color: Colors.white),
+                title: const Text("Courses", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),
+              ListTile(
+                leading: const Icon(Icons.podcasts, color: Colors.white),
+                title: const Text("Podcast", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),
+              ListTile(
+                leading: const Icon(Icons.face_outlined, color: Colors.white),
+                title: const Text("Fashion and Beauty", style: TextStyle(color: Colors.white)),
+                onTap: (){},
+              ),
+
+
               const Divider(color: Colors.white24),
 
               // ==== Policy Section ====

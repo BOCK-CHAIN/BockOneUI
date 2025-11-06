@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:trial/widgets/automotive_grid_item.dart';
 
+import 'Eira/eira_main.dart';
+
 class BockHealthScreen extends StatelessWidget {
   const BockHealthScreen({super.key});
 
@@ -73,10 +75,10 @@ class BockHealthScreen extends StatelessWidget {
                 child: AutomotiveGridItem(
                   title: 'Eira',
                   height: 200,
-                  onTap: launchExternalApp,
-                  /*onTap: (){
+                  //onTap: launchExternalApp,
+                  onTap: (){
                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const EiraApp()));
-                  },*/
+                  },
                 ),
               ),
               const SizedBox(width: 10,),
@@ -103,7 +105,10 @@ class BockHealthScreen extends StatelessWidget {
                     child: AutomotiveGridItem(
                       title: 'Eira',
                       height: 300,
-                      onTap: launchExternalApp,
+                      //onTap: launchExternalApp,
+                      onTap: (){
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const EiraApp()));
+                      },
                     ),
                   ),
                   const SizedBox(width: 10,),

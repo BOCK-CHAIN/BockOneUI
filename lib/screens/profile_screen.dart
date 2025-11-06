@@ -32,18 +32,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://3.109.55.254:3000'; // Replace with your PC IP
+      return 'http://13.233.163.28:3000'; // Replace with your PC IP
     }
 
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.isPhysicalDevice) {
-        return 'http://3.109.55.254:3000'; // Real device
+        return 'http://13.233.163.28:3000'; // Real device
       } else {
-        return 'http://3.109.55.254:3000'; // Emulator
+        return 'http://13.233.163.28:3000'; // Emulator
       }
     } else {
-      return 'http://3.109.55.254:3000'; // iOS or web
+      return 'http://13.233.163.28:3000'; // iOS or web
     }
   }
 

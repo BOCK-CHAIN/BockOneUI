@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:http/http.dart' as http;
 
 class VideoUploadScreen extends StatefulWidget {
-  const VideoUploadScreen({super.key});
+  final String hexId;
+  const VideoUploadScreen({super.key,required this.hexId});
 
   @override
   State<VideoUploadScreen> createState() => _VideoUploadScreenState();
@@ -11,8 +15,8 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  String? videoPath;
-  String? thumbnailPath;
+  File? videoFile;
+  File? thumbnailFile;
 
   // Categories
   final List<String> categories = [
@@ -27,8 +31,65 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
     "Podcast",
   ];
 
-  // Selected categories
   final Set<String> selectedCategories = {};
+
+  Future<void> _pickVideo() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.video);
+    if (result != null) {
+      setState(() => videoFile = File(result.files.single.path!));
+    }
+  }
+
+  Future<void> _pickThumbnail() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      setState(() => thumbnailFile = File(result.files.single.path!));
+    }
+  }
+
+  Future<void> _uploadVideo() async {
+    if (videoFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select a video")),
+      );
+      return;
+    }
+
+    var uri = Uri.parse("http://10.0.2.2:5000/api/videos/upload"); // Android Emulator
+    // For real device, replace with your system IP (e.g. http://192.168.1.5:5000)
+
+    var request = http.MultipartRequest("POST", uri);
+
+    request.fields["title"] = _titleController.text;
+    request.fields["description"] = _descriptionController.text;
+    request.fields["categories"] = selectedCategories.join(",");
+    request.fields["owner_hex_id"] = widget.hexId;
+
+    request.files.add(await http.MultipartFile.fromPath("video", videoFile!.path));
+    if (thumbnailFile != null) {
+      request.files.add(await http.MultipartFile.fromPath("thumbnail", thumbnailFile!.path));
+    }
+
+    var response = await request.send();
+
+    if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("✅ Video uploaded successfully")),
+      );
+      _titleController.clear();
+      _descriptionController.clear();
+      setState(() {
+        videoFile = null;
+        thumbnailFile = null;
+        selectedCategories.clear();
+      });
+      Navigator.of(context).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("❌ Upload failed: ${response.statusCode}")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +115,7 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                     children: [
                       // Video Placeholder
                       GestureDetector(
-                        onTap: () {},
+                        onTap: _pickVideo,
                         child: Container(
                           height: 180,
                           width: double.infinity,
@@ -64,7 +125,7 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                             border: Border.all(color: Colors.purple, width: 1),
                           ),
                           child: Center(
-                            child: videoPath == null
+                            child: videoFile == null
                                 ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: const [
@@ -75,8 +136,11 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                                     style: TextStyle(color: Colors.white70)),
                               ],
                             )
-                                : const Text("Video selected",
-                                style: TextStyle(color: Colors.white)),
+                                : Text(
+                              "📹 Video selected: ${videoFile!.path.split('/').last}",
+                              style: const TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
@@ -85,7 +149,7 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
 
                       // Thumbnail Placeholder
                       GestureDetector(
-                        onTap: () {},
+                        onTap: _pickThumbnail,
                         child: Container(
                           height: 120,
                           width: double.infinity,
@@ -95,7 +159,7 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                             border: Border.all(color: Colors.purple, width: 1),
                           ),
                           child: Center(
-                            child: thumbnailPath == null
+                            child: thumbnailFile == null
                                 ? Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: const [
@@ -106,8 +170,7 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                                     style: TextStyle(color: Colors.white70)),
                               ],
                             )
-                                : const Text("Thumbnail selected",
-                                style: TextStyle(color: Colors.white)),
+                                : Image.file(thumbnailFile!, fit: BoxFit.cover),
                           ),
                         ),
                       ),
@@ -163,22 +226,20 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                       const SizedBox(height: 10),
 
                       GridView.count(
-                        crossAxisCount: 3, // 3 items per row
-                        shrinkWrap: true, // makes it fit inside Column
-                        physics: const NeverScrollableScrollPhysics(), // disable inner scrolling
+                        crossAxisCount: 3,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
-                        childAspectRatio: 2.5, // adjust width/height ratio of boxes
+                        childAspectRatio: 2.5,
                         children: categories.map((category) {
                           final isSelected = selectedCategories.contains(category);
                           return GestureDetector(
                             onTap: () {
                               setState(() {
-                                if (isSelected) {
-                                  selectedCategories.remove(category);
-                                } else {
-                                  selectedCategories.add(category);
-                                }
+                                isSelected
+                                    ? selectedCategories.remove(category)
+                                    : selectedCategories.add(category);
                               });
                             },
                             child: Container(
@@ -186,7 +247,9 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                                 color: isSelected ? Colors.purple : const Color(0xFF2C2C2C),
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(
-                                  color: isSelected ? Colors.purpleAccent : Colors.grey.shade700,
+                                  color: isSelected
+                                      ? Colors.purpleAccent
+                                      : Colors.grey.shade700,
                                 ),
                               ),
                               child: Center(
@@ -218,11 +281,10 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: _uploadVideo,
                           icon: const Icon(Icons.cloud_upload, color: Colors.white),
                           label: const Text("Upload",
-                              style:
-                              TextStyle(color: Colors.white, fontSize: 16)),
+                              style: TextStyle(color: Colors.white, fontSize: 16)),
                         ),
                       ),
                     ],

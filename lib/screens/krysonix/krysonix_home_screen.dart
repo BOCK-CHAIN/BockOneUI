@@ -13,6 +13,7 @@ import 'package:trial/screens/krysonix/widgets/krysonix_history.dart';
 import 'package:trial/screens/krysonix/widgets/krysonix_profile_edit_screen.dart';
 import 'package:trial/screens/krysonix/widgets/krysonix_profile_screen.dart';
 import 'package:trial/screens/krysonix/widgets/krysonix_smart_side_bar.dart';
+import 'package:trial/screens/krysonix/widgets/krysonix_home_screen_mobile_widget.dart';
 
 class KrysonixHomeScreen extends StatelessWidget {
   final String hexId;
@@ -63,7 +64,7 @@ class _WebLayoutState extends State<WebLayout> {
 
   Future<void> fetchUserData() async {
     final url =
-    Uri.parse('http://3.109.55.254:3000/api/profile/hex/${widget.hexId}');
+    Uri.parse('http://13.232.7.213:3000/api/profile/hex/${widget.hexId}');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -169,7 +170,7 @@ class _WebLayoutState extends State<WebLayout> {
           initialTabIndex: 0,
         ));
       } else if (selected == "Creator Studio") {
-        _openExtraPage(const CreatorStudioScreen(isWeb: true,));
+        _openExtraPage(CreatorStudioScreen(isWeb: true,hexId: widget.hexId,));
       } else if(selected == "Settings"){
         _openExtraPage(const ProfileEditScreen(isSettings: false, isWeb: true));
       }
@@ -398,7 +399,7 @@ class _WebLayoutState extends State<WebLayout> {
                     ),
                     ListTile(
                       leading: const Icon(
-                        Icons.settings,
+                        Icons.face_outlined,
                         color: Colors.white,
                       ),
                       onTap: (){},
@@ -413,7 +414,7 @@ class _WebLayoutState extends State<WebLayout> {
                           color: Colors.white,
                         ),
                         onTap: (){
-                          _openExtraPage(const CreatorStudioScreen(isWeb: true,));
+                          _openExtraPage(CreatorStudioScreen(isWeb: true,hexId: widget.hexId,));
                         },
                         title: const Text('Creator Studio',
                             style: TextStyle(color: Colors.white))),
@@ -465,7 +466,7 @@ class _WebLayoutState extends State<WebLayout> {
                                   horizontal: 20, vertical: 14),
                             ),
                             onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=> const VideoUploadScreen()));
+                              Navigator.of(context).push(MaterialPageRoute(builder: (context)=> VideoUploadScreen(hexId: widget.hexId,)));
                             },
                             icon: const Icon(Icons.upload, color: Colors.white),
                             label: const Text(
@@ -512,30 +513,13 @@ class _MobileLayoutState extends State<MobileLayout> {
   int _currentIndex = 0;
   Widget? _extraPage;
   Map<String, dynamic>? userData;
+  late List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
-    fetchUserData();
-  }
-
-  Future<void> fetchUserData() async {
-    final url =
-    Uri.parse('http://3.109.55.254:3000/api/profile/hex/${widget.hexId}');
-    final response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      setState(() {
-        userData = jsonDecode(response.body);
-      });
-    } else {
-      print('Failed to fetch profile. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
-    }
-  }
-
-  final List<Widget> _pages = [
-    // Home
+    _pages = [
+      /*// Home
     Column(
       children: [
         Padding(
@@ -563,11 +547,31 @@ class _MobileLayoutState extends State<MobileLayout> {
           ),
         )
       ],
-    ),
-    const ProfileScreen(initialTabIndex: 3),
-    const ProfileScreen(initialTabIndex: 1),
-    const PlaylistCardDemo(name: "History",),
-  ];
+    ),*/
+      HomeScreenWidget(hexId: widget.hexId,),
+      const ProfileScreen(initialTabIndex: 3),
+      const ProfileScreen(initialTabIndex: 1),
+      const PlaylistCardDemo(name: "History",),
+    ];
+
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    final url =
+    Uri.parse('http://13.233.163.28:3000/api/profile/hex/${widget.hexId}');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      setState(() {
+        userData = jsonDecode(response.body);
+      });
+    } else {
+      print('Failed to fetch profile. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  }
+
 
   void _openExtraPage(Widget page) {
     setState(() {
@@ -589,13 +593,14 @@ class _MobileLayoutState extends State<MobileLayout> {
         ),
       ),
       drawer: KrysonixDrawer(
+        hexId: widget.hexId,
         onProfileTap: () {
           _openExtraPage(const ProfileScreen(
             initialTabIndex: 0,
           ));
         },
         onCreatorStudioTap: () {
-          _openExtraPage(const CreatorStudioScreen(isWeb: false,));
+          _openExtraPage(CreatorStudioScreen(isWeb: false,hexId: widget.hexId,));
         },
         onSettingsTap: () {
           Navigator.of(context).push(MaterialPageRoute(
