@@ -66,18 +66,18 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://13.233.163.28:3000'; // Replace with your PC IP
+      return 'http://13.203.227.210:3000'; // Replace with your PC IP
     }
 
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.isPhysicalDevice) {
-        return 'http://13.233.163.28:3000'; // Real device
+        return 'http://13.203.227.210:3000'; // Real device
       } else {
-        return 'http://13.233.163.28:3000'; // Emulator
+        return 'http://13.203.227.210:3000'; // Emulator
       }
     } else {
-      return 'http://13.233.163.28:3000'; // iOS or web
+      return 'http://13.203.227.210:3000'; // iOS or web
     }
   }
 

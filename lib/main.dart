@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/screens/auth_screen.dart';
+import 'package:trial/screens/golligog/config/app_config.dart';
 import 'package:trial/screens/home_screen.dart';
 import 'package:trial/firebase_options.dart';
 
@@ -10,6 +11,7 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await AppConfig.load();
 
   final prefs = await SharedPreferences.getInstance();
   final savedUsername = prefs.getString('loggedInUsername');
