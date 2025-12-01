@@ -29,7 +29,7 @@ flutter build web
 <p>Run the following command in your local machine:</p>
 
 <pre>
-scp -i "<path for key pair>" -r "<path of the web folder in the project>" ubuntu@<ip address of EC2>:/home/ubuntu/web
+scp -i "&lt;path for key pair&gt;" -r "&lt;path of the web folder in the project&gt;" ubuntu@&lt;ip address of EC2&gt;:/home/ubuntu/web
 </pre>
 
 <hr>
@@ -65,7 +65,7 @@ sudo systemctl restart nginx
 <p>Open your browser and navigate to:</p>
 
 <pre>
-http://<EC2-PUBLIC-IP>
+http://&lt;EC2-PUBLIC-IP&gt;
 </pre>
 
 <hr>
