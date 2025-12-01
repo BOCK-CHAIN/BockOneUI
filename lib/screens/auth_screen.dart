@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trial/screens/configuration/config.dart';
 import 'package:trial/widgets/image_picker.dart';
 import 'package:trial/services/generating_hex_id.dart';
 import 'package:date_time_format/date_time_format.dart';
@@ -66,18 +67,18 @@ class AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://13.203.227.210:3000'; // Replace with your PC IP
+      return 'http://${AppConfig.ipAddress}:3000'; // Replace with your PC IP
     }
 
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.isPhysicalDevice) {
-        return 'http://13.203.227.210:3000'; // Real device
+        return 'http://${AppConfig.ipAddress}:3000'; // Real device
       } else {
-        return 'http://13.203.227.210:3000'; // Emulator
+        return 'http://${AppConfig.ipAddress}:3000'; // Emulator
       }
     } else {
-      return 'http://13.203.227.210:3000'; // iOS or web
+      return 'http://${AppConfig.ipAddress}:3000'; // iOS or web
     }
   }
 

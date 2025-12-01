@@ -56,7 +56,6 @@ class _VideoUploadScreenState extends State<VideoUploadScreen> {
     }
 
     var uri = Uri.parse("http://10.0.2.2:5000/api/videos/upload"); // Android Emulator
-    // For real device, replace with your system IP (e.g. http://192.168.1.5:5000)
 
     var request = http.MultipartRequest("POST", uri);
 

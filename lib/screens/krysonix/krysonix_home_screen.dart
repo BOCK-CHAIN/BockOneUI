@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trial/screens/configuration/config.dart';
 import 'package:trial/screens/home_screen.dart';
 import 'package:trial/screens/krysonix/contact_screen.dart';
 import 'package:trial/screens/krysonix/data/krysonix_policy_data.dart';
@@ -64,7 +65,7 @@ class _WebLayoutState extends State<WebLayout> {
 
   Future<void> fetchUserData() async {
     final url =
-    Uri.parse('http://13.232.7.213:3000/api/profile/hex/${widget.hexId}');
+    Uri.parse('http://${AppConfig.ipAddress}:3000/api/profile/hex/${widget.hexId}');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -559,7 +560,7 @@ class _MobileLayoutState extends State<MobileLayout> {
 
   Future<void> fetchUserData() async {
     final url =
-    Uri.parse('http://13.233.163.28:3000/api/profile/hex/${widget.hexId}');
+    Uri.parse('http://13.203.67.108:3000/api/profile/hex/${widget.hexId}');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

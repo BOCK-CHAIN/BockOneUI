@@ -150,7 +150,8 @@ class _CreatorStudioScreenState extends State<CreatorStudioScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(6),
                                     child: Image.network(
-                                      "http://10.0.2.2:5000/${video.thumbnailUrl!}" ?? '',
+                                      /*"http://10.0.2.2:5000/${video.thumbnailUrl!}" ?? '',*/
+                                      video.thumbnailUrl!,
                                       width: 100,
                                       height: 70,
                                       fit: BoxFit.fill,

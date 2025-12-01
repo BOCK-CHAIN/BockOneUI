@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trial/screens/configuration/config.dart';
 import 'package:video_player/video_player.dart';
 import 'package:trial/screens/krysonix/model/video_model.dart';
 import 'package:flutter/services.dart';
@@ -66,7 +67,8 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   void _initializeVideo(String url) {
-    _controller = VideoPlayerController.networkUrl(Uri.parse("http://10.0.2.2:5000/$url"))
+/*    _controller = VideoPlayerController.networkUrl(Uri.parse("http://10.0.2.2:5000/$url"))*/
+    _controller = VideoPlayerController.networkUrl(Uri.parse(url))
       ..initialize().then((_) {
         setState(() {});
         _controller.play();
@@ -128,7 +130,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
 
   Future<void> fetchUserData() async {
-    final url = Uri.parse('http://13.233.163.28:3000/api/profile/hex/${widget.hexId}');
+    final url = Uri.parse('http://${AppConfig.ipAddress}:3000/api/profile/hex/${widget.hexId}');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -139,7 +141,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   Future<void> fetchUploaderData() async {
     final uploaderHexId = widget.video.uploaderHexId;
-    final url = Uri.parse('http://13.233.163.28:3000/api/profile/hex/$uploaderHexId');
+    final url = Uri.parse('http://${AppConfig.ipAddress}:3000/api/profile/hex/$uploaderHexId');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -365,6 +367,12 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
     }
   }
 
+  String _formatDuration(Duration d) {
+    String two(int n) => n.toString().padLeft(2, '0');
+    final minutes = two(d.inMinutes.remainder(60));
+    final seconds = two(d.inSeconds.remainder(60));
+    return "$minutes:$seconds";
+  }
 
   @override
   void dispose() {
@@ -458,6 +466,17 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                           ],
                         ),
                       ),
+                    // ▶ Time Indicator
+                    Positioned(
+                      bottom: 28,
+                      right: 12,
+                      child: _controller.value.isInitialized
+                          ? Text(
+                        "${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}",
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                      )
+                          : const SizedBox.shrink(),
+                    ),
 
                     // ✅ Progress bar always visible
                     Positioned(
@@ -469,7 +488,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                         _controller,
                         allowScrubbing: true,
                         colors: VideoProgressColors(
-                          playedColor: Colors.redAccent,
+                          playedColor: Colors.purpleAccent,
                           bufferedColor: Colors.white30,
                           backgroundColor: Colors.white10,
                         ),
@@ -544,7 +563,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
                             onPressed: _toggleFollow,
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                              _isFollowing ? Colors.grey[800] : Colors.redAccent,
+                              _isFollowing ? Colors.grey[800] : Colors.purpleAccent,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                             ),
@@ -729,6 +748,13 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
     });
   }
 
+  String _formatDuration(Duration d) {
+    String two(int n) => n.toString().padLeft(2, '0');
+    final minutes = two(d.inMinutes.remainder(60));
+    final seconds = two(d.inSeconds.remainder(60));
+    return "$minutes:$seconds";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -800,6 +826,19 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
                 ),
               ),
 
+            // ▶ Time Indicator (Full Screen)
+            Positioned(
+              bottom: 28,
+              right: 20,
+              child: _controller.value.isInitialized
+                  ? Text(
+                "${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}",
+                style: const TextStyle(color: Colors.white, fontSize: 14),
+              )
+                  : const SizedBox.shrink(),
+            ),
+
+
             // 📊 Progress bar
             Positioned(
               bottom: 8,
@@ -810,7 +849,7 @@ class _FullScreenVideoPlayerState extends State<FullScreenVideoPlayer> {
                 _controller,
                 allowScrubbing: true,
                 colors: VideoProgressColors(
-                  playedColor: Colors.redAccent,
+                  playedColor: Colors.purpleAccent,
                   bufferedColor: Colors.white30,
                   backgroundColor: Colors.white10,
                 ),

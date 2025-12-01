@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/screens/auth_screen.dart';
+import 'package:trial/screens/configuration/config.dart';
 import 'package:trial/screens/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -32,18 +33,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://13.203.227.210:3000'; // Replace with your PC IP
+      return 'http://${AppConfig.ipAddress}:3000'; // Replace with your PC IP
     }
 
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.isPhysicalDevice) {
-        return 'http://13.203.227.210:3000'; // Real device
+        return 'http://${AppConfig.ipAddress}:3000'; // Real device
       } else {
-        return 'http://13.203.227.210:3000'; // Emulator
+        return 'http://${AppConfig.ipAddress}:3000'; // Emulator
       }
     } else {
-      return 'http://13.203.227.210:3000'; // iOS or web
+      return 'http://${AppConfig.ipAddress}:3000'; // iOS or web
     }
   }
 

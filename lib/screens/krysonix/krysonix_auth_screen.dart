@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:trial/screens/configuration/config.dart';
 import 'package:trial/screens/krysonix/krysonix_home_screen.dart';
 
 class KrysonixAuthScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _KrysonixAuthScreenState extends State<KrysonixAuthScreen> {
       'hexId': _enteredHexID,
       'password': _enteredPassword,
     };
-    const apiUrl = 'http://13.233.163.28:3000/api/auth/krysonixLogin';
+    const apiUrl = 'http://${AppConfig.ipAddress}:3000/api/auth/krysonixLogin';
 
     final response = await http.post(
       Uri.parse(apiUrl),

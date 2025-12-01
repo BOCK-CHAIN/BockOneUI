@@ -21,7 +21,8 @@ class VideoCard extends StatelessWidget {
         color: Colors.grey[800],
         image: video.thumbnailUrl != null
             ? DecorationImage(
-          image: NetworkImage("http://10.0.2.2:5000/${video.thumbnailUrl!}"),
+          // image: NetworkImage("http://10.0.2.2:5000/${video.thumbnailUrl!}"),
+          image: NetworkImage(video.thumbnailUrl!),
           fit: BoxFit.cover,
         )
             : null,
