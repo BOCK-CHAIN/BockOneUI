@@ -28,7 +28,7 @@ class _KrysonixAuthScreenState extends State<KrysonixAuthScreen> {
       'hexId': _enteredHexID,
       'password': _enteredPassword,
     };
-    const apiUrl = 'http://${AppConfig.ipAddress}:3000/api/auth/krysonixLogin';
+    const apiUrl = 'http://${AppConfig.ipAddress}/api/auth/krysonixLogin';
 
     final response = await http.post(
       Uri.parse(apiUrl),

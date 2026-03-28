@@ -65,7 +65,7 @@ class _WebLayoutState extends State<WebLayout> {
 
   Future<void> fetchUserData() async {
     final url =
-    Uri.parse('http://${AppConfig.ipAddress}:3000/api/profile/hex/${widget.hexId}');
+    Uri.parse('http://${AppConfig.ipAddress}/api/profile/hex/${widget.hexId}');
     final response = await http.get(url);
 
     if (response.statusCode == 200) {

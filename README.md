@@ -1,76 +1,101 @@
-<h1 align="center">🚀 Bock One Frontend Deployment Guide (Flutter Web + EC2 + Nginx)</h1>
+# Bock One UI
 
-<hr>
+Frontend for Bock One built with Flutter.
 
-<h2>📌 Step 1: Clone the Repository</h2>
+## Environment setup
 
-<pre>
-git clone https://github.com/BOCK-CHAIN/BockOneUI.git
-</pre>
+1. Copy the example env file:
 
-<hr>
+```bash
+cp .env.example .env
+```
 
-<h2>📌 Step 2: Build Flutter Web</h2>
+2. Open `.env` and fill in values for all keys.
 
-<ol>
-  <li>Start your backend server on EC2.</li>
-  <li>Edit <strong>config.dart</strong> and update the API base URL with your EC2 public IP.</li>
-  <li>Run the Flutter web build command:</li>
-</ol>
+3. Never commit `.env` or private keys.
 
-<pre>
+## Build Flutter web
+
+```bash
+flutter pub get
 flutter build web
-</pre>
+```
 
-<hr>
+Build output will be generated in `build/web`.
 
-<h2>📌 Step 3: Copy Web Build to EC2 Instance</h2>
+## Deploy with S3 + CloudFront
 
-<p>Run the following command in your local machine:</p>
+### Prerequisites
 
-<pre>
-scp -i "&lt;path for key pair&gt;" -r "&lt;path of the web folder in the project&gt;" ubuntu@&lt;ip address of EC2&gt;:/home/ubuntu/web
-</pre>
+- AWS account with permissions for S3, CloudFront, and ACM.
+- AWS CLI configured (`aws configure`).
+- Domain hosted in Route 53 (optional but recommended).
 
-<hr>
+### 1) Create and configure S3 bucket
 
-<h2>📌 Step 4: Configure Nginx on EC2</h2>
+Use a globally unique bucket name:
 
-<p>SSH into your EC2 instance and run the following commands in order:</p>
+```bash
+aws s3 mb s3://<your-bucket-name>
+```
 
-<pre>
-sudo apt update && sudo apt upgrade -y
+Keep the bucket private when using CloudFront Origin Access Control (recommended).
 
-sudo apt install -y nginx
+### 2) Upload the Flutter web build
 
-sudo systemctl enable nginx
-sudo systemctl start nginx
+```bash
+aws s3 sync build/web s3://<your-bucket-name> --delete
 
-sudo rm -rf /var/www/html/*
+or manully upload on aws platform make sure index.html is in the root
+```
 
-sudo cp -r /home/ubuntu/web/* /var/www/html/
+### 3) Create CloudFront distribution
 
-sudo chown -R www-data:www-data /var/www/html
+In AWS Console:
 
-sudo find /var/www/html -type d -exec chmod 755 {} \;
-sudo find /var/www/html -type f -exec chmod 644 {} \;
+1. Go to CloudFront -> Create distribution.
+2. Set origin to your S3 bucket.
+3. Enable Origin Access Control and attach it to the origin.
+4. Viewer protocol policy: Redirect HTTP to HTTPS.
+5. Default root object: `index.html`.
 
-sudo systemctl restart nginx
-</pre>
 
-<hr>
+### 4) Allow CloudFront to read S3 bucket
 
-<h2>📌 Step 5: Access Your Frontend</h2>
+Attach a bucket policy that allows only your CloudFront distribution. Replace placeholders before applying:
 
-<p>Open your browser and navigate to:</p>
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowCloudFrontServicePrincipalReadOnly",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "cloudfront.amazonaws.com"
+      },
+      "Action": "s3:GetObject",
+      "Resource": "arn:aws:s3:::<your-bucket-name>/*",
+      "Condition": {
+        "StringEquals": {
+          "AWS:SourceArn": "arn:aws:cloudfront::<account-id>:distribution/<distribution-id>"
+        }
+      }
+    }
+  ]
+}
+```
 
-<pre>
-http://&lt;EC2-PUBLIC-IP&gt;
-</pre>
+### 5) Invalidate cache after every deployment
 
-<hr>
+```bash
+aws cloudfront create-invalidation \
+  --distribution-id <distribution-id> \
+  --paths "/*"
+```
 
-<h2 align="center">🎉 Deployment Complete</h2>
 
-<p align="center">Your Flutter Web app is now successfully deployed on AWS EC2 with Nginx.</p>
 
+## Legacy EC2 + Nginx deployment
+
+If you still need EC2/Nginx deployment, see `DEPLOYMENT.md`.

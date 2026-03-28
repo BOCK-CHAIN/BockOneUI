@@ -50,18 +50,18 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
   Future<String> getBaseUrl() async {
     if (kIsWeb) {
       // Accessing from browser (Flutter Web)
-      return 'http://${AppConfig.ipAddress}:3000'; // Replace with your PC IP
+      return 'http://${AppConfig.ipAddress}';
     }
 
     if (Platform.isAndroid) {
       final androidInfo = await DeviceInfoPlugin().androidInfo;
       if (androidInfo.isPhysicalDevice) {
-        return 'http://${AppConfig.ipAddress}:3000'; // Real device
+        return 'http://${AppConfig.ipAddress}';
       } else {
-        return 'http://${AppConfig.ipAddress}:3000'; // Emulator
+        return 'http://${AppConfig.ipAddress}';
       }
     } else {
-      return 'http://${AppConfig.ipAddress}:3000'; // iOS or web
+      return 'http://${AppConfig.ipAddress}';
     }
   }
 

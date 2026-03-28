@@ -130,7 +130,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
 
   Future<void> fetchUserData() async {
-    final url = Uri.parse('http://${AppConfig.ipAddress}:3000/api/profile/hex/${widget.hexId}');
+    final url = Uri.parse('http://${AppConfig.ipAddress}/api/profile/hex/${widget.hexId}');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
@@ -141,7 +141,7 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
   Future<void> fetchUploaderData() async {
     final uploaderHexId = widget.video.uploaderHexId;
-    final url = Uri.parse('http://${AppConfig.ipAddress}:3000/api/profile/hex/$uploaderHexId');
+    final url = Uri.parse('http://${AppConfig.ipAddress}/api/profile/hex/$uploaderHexId');
     final response = await http.get(url);
     if (response.statusCode == 200) {
       setState(() {
