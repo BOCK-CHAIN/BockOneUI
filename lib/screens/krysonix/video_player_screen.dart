@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:http/http.dart' as http;
 import 'package:trial/screens/configuration/config.dart';
 import 'package:video_player/video_player.dart';
@@ -67,8 +69,10 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   }
 
   void _initializeVideo(String url) {
+    final normalizedUrl = _normalizePlaybackUrl(url);
+    debugPrint("Krysonix player URL: $normalizedUrl");
 /*    _controller = VideoPlayerController.networkUrl(Uri.parse("http://10.0.2.2:5000/$url"))*/
-    _controller = VideoPlayerController.networkUrl(Uri.parse(url))
+    _controller = VideoPlayerController.networkUrl(Uri.parse(normalizedUrl))
       ..initialize().then((_) {
         setState(() {});
         _controller.play();
@@ -86,6 +90,31 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
         _playNextVideo();
       }
     });
+  }
+
+  String _normalizePlaybackUrl(String rawUrl) {
+    final fallbackBase = kIsWeb
+        ? 'http://localhost:5000'
+        : (defaultTargetPlatform == TargetPlatform.android
+            ? 'http://10.0.2.2:5000'
+            : 'http://127.0.0.1:5000');
+
+    final parsed = Uri.tryParse(rawUrl);
+    if (parsed == null) return rawUrl;
+
+    if (!parsed.hasScheme) {
+      final normalizedPath = rawUrl.startsWith('/') ? rawUrl : '/$rawUrl';
+      return Uri.parse(fallbackBase).replace(path: normalizedPath).toString();
+    }
+
+    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+      final host = parsed.host.toLowerCase();
+      if (host == '127.0.0.1' || host == 'localhost') {
+        return parsed.replace(host: '10.0.2.2').toString();
+      }
+    }
+
+    return rawUrl;
   }
 
   void _toggleControlsVisibility() {

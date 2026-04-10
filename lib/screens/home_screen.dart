@@ -2,23 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:trial/screens/bock_automotive_screen.dart';
 import 'package:trial/screens/bock_ai_screen.dart';
 import 'package:trial/screens/bock_chain_screen.dart';
-import 'package:trial/screens/bock_foods_screen.dart';
 import 'package:trial/screens/bock_force_screen.dart';
 import 'package:trial/screens/bock_health_screen.dart';
 import 'package:trial/screens/bock_institutes_screen.dart';
 import 'package:trial/screens/bock_space_screen.dart';
+import 'package:trial/screens/bock_foods_entry.dart';
 import 'package:trial/screens/profile_screen.dart';
 import 'package:trial/widgets/home_screen_grid_item.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({super.key, required this.userName});
-  String userName;
+  const HomeScreen({super.key, required this.userName});
+  final String userName;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late String _userName;
+
+  @override
+  void initState() {
+    super.initState();
+    _userName = widget.userName;
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -59,12 +67,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: const Icon(Icons.person_outline, color: Color(0xFF6A1B9A)),
                     onPressed: () async{
                       final updated = await Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => ProfileScreen(username: widget.userName)),
+                        MaterialPageRoute(builder: (context) => ProfileScreen(username: _userName)),
                       );
 
-                      if (updated is String && updated != widget.userName) {
+                      if (updated is String && updated != _userName) {
                         setState(() {
-                          widget.userName= updated; // update locally
+                          _userName = updated;
                         });
                       }
                     },
@@ -97,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         image: 'assets/images/foods.png',
                         labelColor: Colors.green,
                         onSelectApp: () {
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const BockFoodsScreen()));
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const BockFoodsEntry()));
                         },
                       ),
                       HomeScreenGridItem(

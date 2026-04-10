@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../config/maps_api_config.dart';
 
 class AddPlaceModal extends StatefulWidget {
   final String userId; // optional user id to send if no auth token
@@ -16,6 +17,7 @@ class _AddPlaceModalState extends State<AddPlaceModal>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isSubmitting = false;
+  final String _backendUrl = MapsApiConfig.backendBaseUrl;
 
   final List<String> tabs = [
     "General",
@@ -230,15 +232,13 @@ class _AddPlaceModalState extends State<AddPlaceModal>
         'price_range': _priceRangeController.text.trim(),
       };
 
-      const String apiUrl = 'http://10.0.2.2:3000/contribute/contribute-place';
-
       final headers = <String, String>{
         'Content-Type': 'application/json',
         if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',
       };
 
       final response = await http.post(
-        Uri.parse(apiUrl),
+        Uri.parse('$_backendUrl/contribute/contribute-place'),
         headers: headers,
         body: json.encode(placeData),
       );

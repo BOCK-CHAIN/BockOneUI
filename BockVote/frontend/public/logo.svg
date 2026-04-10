@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="800px" height="800px" viewBox="0 0 800 800" version="1.1">
+  <defs>
+    <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ac77ac" />
+      <stop offset="100%" stop-color="#924c92" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  <g id="chain-logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <circle id="center-circle" fill="#d0d0d0" stroke="#924c92" stroke-width="8" cx="400" cy="400" r="140" filter="url(#shadow)"/>
+    <g id="chain-links" transform="translate(100, 100)" fill="url(#purpleGradient)" filter="url(#shadow)">
+      <!-- Top link -->
+      <path d="M300,0 C310,0 320,10 320,20 L320,80 C320,90 310,100 300,100 L200,100 C190,100 180,90 180,80 L180,20 C180,10 190,0 200,0 L300,0 Z M300,20 L200,20 L200,80 L300,80 L300,20 Z" />
+      
+      <!-- Right link -->
+      <path d="M500,200 C500,210 490,220 480,220 L420,220 C410,220 400,210 400,200 L400,100 C400,90 410,80 420,80 L480,80 C490,80 500,90 500,100 L500,200 Z M480,200 L480,100 L420,100 L420,200 L480,200 Z" />
+      
+      <!-- Bottom link -->
+      <path d="M300,500 C290,500 280,490 280,480 L280,420 C280,410 290,400 300,400 L400,400 C410,400 420,410 420,420 L420,480 C420,490 410,500 400,500 L300,500 Z M300,480 L400,480 L400,420 L300,420 L300,480 Z" />
+      
+      <!-- Left link -->
+      <path d="M0,200 C0,190 10,180 20,180 L80,180 C90,180 100,190 100,200 L100,300 C100,310 90,320 80,320 L20,320 C10,320 0,310 0,300 L0,200 Z M20,200 L20,300 L80,300 L80,200 L20,200 Z" />
+      
+      <!-- Top-right link -->
+      <path d="M450,50 C460,60 460,75 450,85 L405,130 C395,140 380,140 370,130 L325,85 C315,75 315,60 325,50 L370,5 C380,-5 395,-5 405,5 L450,50 Z M430,50 L385,5 L340,50 L385,95 L430,50 Z" />
+      
+      <!-- Bottom-right link -->
+      <path d="M450,450 C440,460 425,460 415,450 L370,405 C360,395 360,380 370,370 L415,325 C425,315 440,315 450,325 L495,370 C505,380 505,395 495,405 L450,450 Z M450,430 L495,385 L450,340 L405,385 L450,430 Z" />
+      
+      <!-- Bottom-left link -->
+      <path d="M50,450 C40,440 40,425 50,415 L95,370 C105,360 120,360 130,370 L175,415 C185,425 185,440 175,450 L130,495 C120,505 105,505 95,495 L50,450 Z M70,450 L115,495 L160,450 L115,405 L70,450 Z" />
+      
+      <!-- Top-left link -->
+      <path d="M50,50 C60,40 75,40 85,50 L130,95 C140,105 140,120 130,130 L85,175 C75,185 60,185 50,175 L5,130 C-5,120 -5,105 5,95 L50,50 Z M50,70 L5,115 L50,160 L95,115 L50,70 Z" />
+    </g>
+  </g>
+</svg> 

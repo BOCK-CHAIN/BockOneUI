@@ -935,13 +935,36 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   void _launchURL(String url) async {
     try {
       final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        print('Could not launch $url');
+      final launchedExternally = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!launchedExternally) {
+        final launchedInApp = await launchUrl(
+          uri,
+          mode: LaunchMode.platformDefault,
+        );
+        if (!launchedInApp) {
+          print('Could not launch $url');
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('No browser app found to open this link.'),
+              ),
+            );
+          }
+        }
       }
     } catch (e) {
       print('Error launching URL: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Failed to open link.'),
+          ),
+        );
+      }
     }
   }
 

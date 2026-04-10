@@ -13,6 +13,7 @@ import 'dart:convert';
 import 'package:latlong2/latlong.dart';
 import './directions/directions.dart';
 import 'dart:async';
+import '../config/maps_api_config.dart';
 
 class HomeIndex extends StatefulWidget {
   final bool forceGuest;
@@ -99,8 +100,9 @@ class _HomeIndexState extends State<HomeIndex> {
     setState(() => isSearching = true);
 
     try {
+      final nominatimUrl = dotenv.env['NOMINATIM_URL'] ?? 'http://127.0.0.1:8082';
       final url = Uri.parse(
-        'http://34.14.171.170:8088/search?q=$query&format=json&limit=5',
+        '$nominatimUrl/search?q=$query&format=json&limit=5',
       );
       final response = await http.get(url);
 
@@ -148,7 +150,7 @@ class _HomeIndexState extends State<HomeIndex> {
     });
   }
 
-  final String backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+  final String backendUrl = MapsApiConfig.backendBaseUrl;
 
   Future<void> _showListsModal() async {
     final prefs = await SharedPreferences.getInstance();

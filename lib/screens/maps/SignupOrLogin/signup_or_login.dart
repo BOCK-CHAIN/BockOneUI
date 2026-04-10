@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../HomePage/index.dart';
+import '../config/maps_api_config.dart';
 
 
 class SignupOrLogin extends StatelessWidget {
@@ -60,7 +60,7 @@ class LoginBoxState extends State<LoginBox> {
 
   final TextEditingController _loginEmailController = TextEditingController();
   final TextEditingController _loginPasswordController = TextEditingController();
-  final String backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+  final String backendUrl = MapsApiConfig.backendBaseUrl;
   late SharedPreferences prefs;
 
   @override

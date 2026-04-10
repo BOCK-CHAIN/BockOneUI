@@ -8,11 +8,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './subpages/locationaccess.dart';
 import 'package:permission_handler/permission_handler.dart';
 import './subpages/notifications.dart';
+import '../config/maps_api_config.dart';
 
 class AccountPage extends StatelessWidget {
    AccountPage({super.key});
 
-  final String backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+  final String backendUrl = MapsApiConfig.backendBaseUrl;
 
   Future<void> _logout(BuildContext context) async {
     try {
@@ -138,7 +139,7 @@ class _AccountBodyState extends State<AccountBody> {
   Map<String, dynamic>? user;
   bool isLoading = true;
   final TextEditingController emailController = TextEditingController();
-  final String backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+  final String backendUrl = MapsApiConfig.backendBaseUrl;
   final String mapurl = dotenv.env['MAPTILESERVER_URL'] ?? '';
   final TextEditingController currentPasswordController = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();

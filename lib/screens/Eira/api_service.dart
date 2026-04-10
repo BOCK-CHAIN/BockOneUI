@@ -13,14 +13,45 @@ import 'package:http_parser/http_parser.dart';
 import 'package:trial/screens/Eira/modals/chat_session.dart';
 import 'package:trial/screens/Eira/modals/chat_message.dart';
 import 'package:trial/screens/Eira/modals/platform_file_wrapper.dart';
-import 'package:flutter/foundation.dart'; // For kIsWeb
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 // import 'dart:html' as html; // For localStorage fallback (web only)
 
 class ApiService {
-  // IMPORTANT: Make sure this IP address is correct for your EC2 instance.
-  final String _baseUrl = "http://35.154.197.190:8080";
-  final Dio _dio = Dio();
+  static const int _defaultPort = 8080;
+
+  static String _resolveBaseUrl() {
+    final eiraOverride =
+        const String.fromEnvironment('EIRA_API_BASE_URL').trim();
+    if (eiraOverride.isNotEmpty) return eiraOverride;
+
+    if (kIsWeb) {
+      return 'http://localhost:$_defaultPort';
+    }
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      return 'http://10.0.2.2:$_defaultPort';
+    }
+
+    return 'http://localhost:$_defaultPort';
+  }
+
+  final String _baseUrl;
+  final Dio _dio;
   final _storage = const FlutterSecureStorage();
+
+  ApiService({String? baseUrl, Dio? dio})
+      : _baseUrl = (baseUrl?.trim().isNotEmpty ?? false)
+            ? baseUrl!.trim()
+            : _resolveBaseUrl(),
+        _dio = dio ??
+            Dio(
+              BaseOptions(
+                connectTimeout: const Duration(seconds: 20),
+                receiveTimeout: const Duration(seconds: 40),
+                sendTimeout: const Duration(seconds: 20),
+              ),
+            );
 
   // --- Core Auth Methods ---
 
@@ -43,16 +74,33 @@ class ApiService {
         },
       );
     } on DioException catch (e) {
-      final errorMessage = e.response?.data['error'] ?? 'Registration failed.';
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.connectionError) {
+        throw Exception(
+          'Eira server is unreachable at $_baseUrl. '
+          'The checked-in backend defaults to port $_defaultPort. '
+          'Check server status / firewall / port / internet. (${e.message})',
+        );
+      }
+
+      final data = e.response?.data;
+      final errorMessage = (data is Map && data['error'] != null)
+          ? data['error'].toString()
+          : (data is Map && data['message'] != null)
+              ? data['message'].toString()
+              : 'Registration failed.';
       throw Exception(errorMessage);
     }
   }
 
-  Future<void> login({ required String email, required String password }) async {
+  Future<void> login({required String email, required String password}) async {
     try {
+      print('Eira login using base URL: $_baseUrl');
       final response = await _dio.post(
         '$_baseUrl/api/login',
-        data: { 'email': email, 'password': password },
+        data: {'email': email, 'password': password},
       );
 
       // Debug log: Print full response (remove in production)
@@ -64,12 +112,16 @@ class ApiService {
         throw Exception('Login failed: Server returned ${response.statusCode}');
       }
 
-      final Map<String, dynamic> data = response.data is Map ? response.data as Map<String, dynamic> : {};
+      final Map<String, dynamic> data = response.data is Map
+          ? response.data as Map<String, dynamic>
+          : {};
       final String? token = data['token']?.toString();
-      final Map<String, dynamic>? user = data['user'] is Map ? data['user'] as Map<String, dynamic>? : null;
+      final Map<String, dynamic>? user = data['user'] is Map
+          ? data['user'] as Map<String, dynamic>?
+          : null;
 
       print('Extracted token: $token'); // Debug: Check token
-      print('Extracted user: $user');   // Debug: Check user
+      print('Extracted user: $user'); // Debug: Check user
 
       if (token == null || token.isEmpty) {
         // Handle missing/invalid token (e.g., bad creds)
@@ -105,14 +157,31 @@ class ApiService {
       print('Login successful: Token and user info stored'); // Debug
     } on DioException catch (e) {
       print('DioException in login: ${e.message}'); // Debug
-      final errorMessage = e.response?.data['error'] ?? e.response?.data['message'] ?? 'Login failed.';
-      throw Exception(errorMessage.toString());
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.connectionError) {
+        throw Exception(
+          'Eira server is unreachable at $_baseUrl. '
+          'The checked-in backend defaults to port $_defaultPort. '
+          'Check server status / firewall / port / internet. (${e.message})',
+        );
+      }
+
+      final data = e.response?.data;
+      final errorMessage = (data is Map && data['error'] != null)
+          ? data['error'].toString()
+          : (data is Map && data['message'] != null)
+              ? data['message'].toString()
+              : 'Login failed.';
+      throw Exception(errorMessage);
     } catch (e) {
       print('Unexpected error in login: $e'); // Catch-all debug
       print('Stack trace: ${StackTrace.current}'); // More debug info
       throw Exception('Login failed: $e');
     }
   }
+
   Future<void> logout() async {
     await _storage.delete(key: 'jwt_token');
     await _storage.deleteAll();

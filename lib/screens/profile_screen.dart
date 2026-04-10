@@ -1,15 +1,13 @@
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
 
 //import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:trial/screens/auth_screen.dart';
-import 'package:trial/screens/configuration/config.dart';
+import 'package:trial/screens/configuration/backend_url_resolver.dart';
+import 'package:trial/screens/golligog/config/app_config.dart' as env;
 import 'package:trial/screens/edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -31,21 +29,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<String> getBaseUrl() async {
-    if (kIsWeb) {
-      // Accessing from browser (Flutter Web)
-      return 'http://${AppConfig.ipAddress}:3000'; // Replace with your PC IP
-    }
-
-    if (Platform.isAndroid) {
-      final androidInfo = await DeviceInfoPlugin().androidInfo;
-      if (androidInfo.isPhysicalDevice) {
-        return 'http://${AppConfig.ipAddress}:3000'; // Real device
-      } else {
-        return 'http://${AppConfig.ipAddress}:3000'; // Emulator
-      }
-    } else {
-      return 'http://${AppConfig.ipAddress}:3000'; // iOS or web
-    }
+    return BackendUrlResolver.resolve(
+      configuredBaseUrl: env.AppConfig.backendBaseUrl,
+      defaultPort: 3000,
+    );
   }
 
   String _formatDate(String? isoDate) {

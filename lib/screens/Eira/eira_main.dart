@@ -220,7 +220,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _loadUserInfo(); // Load user info first
     _loadSessions();
-    _initializeCamera();
     if (!kIsWeb) {
       _speech = stt.SpeechToText();
       _initializeSpeech();

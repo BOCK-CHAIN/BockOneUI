@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:trial/screens/configuration/backend_url_resolver.dart';
 class MapBackground extends StatefulWidget {
   final LatLng?
   targetLocation; // place selected by user (keeps existing behaviour)
@@ -23,16 +24,46 @@ class MapBackground extends StatefulWidget {
 
 class _MapBackgroundState extends State<MapBackground> {
   LatLng? _currentLocation;
+  String? _tileTemplate;
   final MapController _mapController = MapController();
-  final mapurl = dotenv.env['MAPTILESERVER_URL'];
   // zoom clamp values (adjust if you need deeper zoom)
   static const double _minZoom = 3.0;
   static const double _maxZoom = 18.0;
   static const double _tileSize = 256.0;
+  static const String _defaultTileTemplate =
+      'http://localhost:8081/styles/basic-preview/{z}/{x}/{y}.png?key=myfirstkey';
+
+  String _buildTileTemplate(String? base) {
+    if (base == null || base.trim().isEmpty) {
+      return _defaultTileTemplate;
+    }
+    final trimmed = base.trim();
+    // If the env already provides a template, use it as-is.
+    if (trimmed.contains('{z}') && trimmed.contains('{x}') && trimmed.contains('{y}')) {
+      return trimmed;
+    }
+    // Otherwise, treat it as a base URL and append the standard path.
+    return '$trimmed/styles/basic-preview/{z}/{x}/{y}.png';
+  }
+
+  Future<void> _loadTileTemplate() async {
+    final configuredTemplate =
+        _buildTileTemplate(dotenv.env['MAPTILESERVER_URL']);
+    final resolvedTemplate = await BackendUrlResolver.resolve(
+      configuredBaseUrl: configuredTemplate,
+      defaultPort: 8081,
+    );
+
+    if (!mounted) return;
+    setState(() {
+      _tileTemplate = resolvedTemplate;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _loadTileTemplate();
     _determinePosition();
     // if initial routePoints exist, schedule fit after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -188,11 +219,11 @@ class _MapBackgroundState extends State<MapBackground> {
             initialZoom: 7.0,
           ),
           children: [
-            TileLayer(
-              urlTemplate:
-                  '$mapurl/styles/basic-preview/{z}/{x}/{y}.png?key=myfirstkey',
-              userAgentPackageName: 'com.example.my_map_app',
-            ),
+            if (_tileTemplate != null)
+              TileLayer(
+                urlTemplate: _tileTemplate!,
+                userAgentPackageName: 'com.example.my_map_app',
+              ),
 
             // current device location (blue)
             if (_currentLocation != null)

@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../index.dart';
+import '../../config/maps_api_config.dart';
 
 class YouPage extends StatefulWidget {
   const YouPage({super.key});
@@ -15,7 +15,7 @@ class YouPage extends StatefulWidget {
 class _YouPageState extends State<YouPage> {
   bool _loading = true;
   List<Map<String, dynamic>> _userLists = [];
-  final String backendUrl = dotenv.env['BACKEND_URL'] ?? '';
+  final String backendUrl = MapsApiConfig.backendBaseUrl;
   final TextEditingController _listNameController = TextEditingController();
 
   @override

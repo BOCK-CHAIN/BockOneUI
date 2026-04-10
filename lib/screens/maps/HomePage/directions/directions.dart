@@ -25,8 +25,9 @@ class DirectionsPage extends StatefulWidget {
 class _DirectionsPageState extends State<DirectionsPage> {
   final TextEditingController _startCtrl = TextEditingController();
   final TextEditingController _destCtrl = TextEditingController();
-  final String osrmurl= dotenv.env['OSRM_URL'] ?? '';
-  final String nominatimurl= dotenv.env['NOMINATIM_URL'] ?? '';
+  final String osrmurl = dotenv.env['OSRM_URL'] ?? 'http://127.0.0.1:5001';
+  final String nominatimurl =
+      dotenv.env['NOMINATIM_URL'] ?? 'http://127.0.0.1:8082';
   LatLng? _startLoc;
   LatLng? _destLoc;
   bool _busy = false;
@@ -198,28 +199,52 @@ class _DirectionsPageState extends State<DirectionsPage> {
         '?overview=full',
       );
       final response = await http.get(osrmUrl);
+      final json = jsonDecode(response.body);
+      final routes = json['routes'] as List?;
 
-      if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        final encodedPolyline = json['routes'][0]['geometry'];
+      if (response.statusCode != 200 || routes == null || routes.isEmpty) {
+        final apiCode = (json is Map && json['code'] != null)
+            ? json['code'].toString()
+            : '';
+        final apiMessage = (json is Map && json['message'] != null)
+            ? json['message'].toString()
+            : '';
 
-        PolylinePoints polylinePoints = PolylinePoints(apiKey: '');
-        List<PointLatLng> decodedPoints = PolylinePoints.decodePolyline(
-          encodedPolyline,
-        );
-        final routePoints = decodedPoints
-            .map((point) => LatLng(point.latitude, point.longitude))
-            .toList();
+        var message = 'Unable to find a route for the selected points.';
+        if (apiCode == 'NoRoute') {
+          message =
+              'No route found for these points. Pick places closer to the OSRM map coverage.';
+        } else if (apiMessage.isNotEmpty) {
+          message = apiMessage;
+        }
 
         if (mounted) {
-          if (mounted) {
-            widget.onRouteFound?.call(routePoints, json['routes'][0]);
-            widget.onClose?.call();
-          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(message)),
+          );
         }
+        return;
+      }
+
+      final encodedPolyline = routes.first['geometry'];
+      PolylinePoints polylinePoints = PolylinePoints(apiKey: '');
+      List<PointLatLng> decodedPoints = PolylinePoints.decodePolyline(
+        encodedPolyline,
+      );
+      final routePoints = decodedPoints
+          .map((point) => LatLng(point.latitude, point.longitude))
+          .toList();
+
+      if (mounted) {
+        widget.onRouteFound?.call(routePoints, routes.first);
+        widget.onClose?.call();
       }
     } catch (e) {
-      // ...
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Route request failed: $e')),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

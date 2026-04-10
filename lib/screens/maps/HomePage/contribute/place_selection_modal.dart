@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'edit_place_modal.dart';
+import '../../config/maps_api_config.dart';
 
 enum PlaceSelectionMode { edit, delete }
 
@@ -27,6 +28,7 @@ class _PlaceSelectionModalState extends State<PlaceSelectionModal> {
   int _currentPage = 1;
   int _totalPages = 1;
   bool _hasMore = false;
+  final String _backendUrl = MapsApiConfig.backendBaseUrl;
 
   @override
   void initState() {
@@ -54,10 +56,10 @@ class _PlaceSelectionModalState extends State<PlaceSelectionModal> {
         return;
       }
 
-      const String apiUrl = 'http://10.0.2.2:3000/contribute/user-contributions';
-
       final response = await http.get(
-        Uri.parse('$apiUrl?page=$_currentPage&limit=10'),
+        Uri.parse(
+          '$_backendUrl/contribute/user-contributions?page=$_currentPage&limit=10',
+        ),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',
@@ -108,7 +110,7 @@ class _PlaceSelectionModalState extends State<PlaceSelectionModal> {
       }
 
       final response = await http.delete(
-        Uri.parse('http://10.0.2.2:3000/contribute/place/$placeId'),
+        Uri.parse('$_backendUrl/contribute/place/$placeId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

@@ -42,3 +42,19 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+BockDocsBackend/
+BockDocsFlutterUI/
+BockDriveBackend/
+BockDriveFlutterUI/
+BockFoodsServer/
+BockFoodsUI/
+BockMapsServer/
+BockOneBackend/
+BockRuvielNewUI/
+GolligogBackend/
+KrysonixFlutterBackend/
+# OSRM / map data
+*.osm
+*.osrm*
+*.pbf

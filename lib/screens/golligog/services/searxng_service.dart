@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, defaultTargetPlatform, kIsWeb;
 import 'package:http/http.dart' as http;
 import '../models/search_models.dart';
 import '../config/app_config.dart';
@@ -9,6 +11,29 @@ class SearXNGService {
   static const String _searchEndpoint = '/search';
   
   final http.Client _client = http.Client();
+
+  Uri? _buildLocalhostFallbackUri(Uri uri) {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) {
+      return null;
+    }
+
+    final host = uri.host.toLowerCase();
+    if (host == 'localhost' || host == '127.0.0.1') {
+      return uri.replace(host: '10.0.2.2');
+    }
+    return null;
+  }
+
+  Future<http.Response> _get(Uri uri) {
+    return _client.get(
+      uri,
+      headers: {
+        'Accept': 'application/json',
+        // Keep headers CORS-simple for Flutter web to avoid preflight failures.
+        'Accept-Language': 'en-US,en;q=0.9',
+      },
+    ).timeout(const Duration(seconds: 30));
+  }
   
   /// Search using SearXNG API directly
   Future<SearchResponse> search({
@@ -30,28 +55,33 @@ class SearXNGService {
       };
       
       final finalUri = Uri.parse('$_baseUrl$_searchEndpoint').replace(queryParameters: queryParams);
-      print('DEBUG: Making request to: $finalUri');
+      final primaryUri = _buildLocalhostFallbackUri(finalUri) ?? finalUri;
+      print('DEBUG: Making request to: $primaryUri');
       print('DEBUG: Headers: ${{'Accept': 'application/json', 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}}');
       
-      final response = await _client.get(
-        finalUri,
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-          'Accept-Language': 'en-US,en;q=0.9',
-          'Accept-Encoding': 'gzip, deflate',
-          'Connection': 'keep-alive',
-          'X-Forwarded-For': '127.0.0.1',
-          'X-Real-IP': '127.0.0.1',
-        },
-      ).timeout(const Duration(seconds: 30));
+      late final http.Response response;
+      try {
+        response = await _get(primaryUri);
+      } catch (primaryError) {
+        final fallbackUri = primaryUri == finalUri
+            ? _buildLocalhostFallbackUri(finalUri)
+            : null;
+        if (fallbackUri == null) {
+          rethrow;
+        }
+        print('DEBUG: Primary URL failed: $primaryError');
+        print('DEBUG: Retrying with fallback URL: $fallbackUri');
+        response = await _get(fallbackUri);
+      }
       
       print('DEBUG: Response status: ${response.statusCode}');
       print('DEBUG: Response headers: ${response.headers}');
       print('DEBUG: Response body length: ${response.body.length}');
       
       if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
+        final jsonData = Map<String, dynamic>.from(
+          json.decode(response.body) as Map,
+        );
         
         // Manual parsing to debug the issue
         print('DEBUG: Attempting manual parsing...');
@@ -67,7 +97,15 @@ class SearXNGService {
               // Check for problematic fields before parsing
               for (String key in resultJson.keys) {
                 final value = resultJson[key];
-                if (value is List && !['engines', 'positions', 'parsed_url'].contains(key)) {
+                if (value is List &&
+                    ![
+                      'engines',
+                      'positions',
+                      'parsed_url',
+                      'thumbnail',
+                      'thumbnail_src',
+                      'img_src',
+                    ].contains(key)) {
                   print('DEBUG: WARNING - Result $i field "$key" is unexpected List: $value');
                 }
                 if (value is Map && !['parsed_url'].contains(key)) {
@@ -84,29 +122,34 @@ class SearXNGService {
               
               // Let's see which specific field is the issue
               final resultJson = resultsList[i] as Map<String, dynamic>;
-              for (String field in ['title', 'url', 'content', 'engine', 'template', 'thumbnail', 'img_src', 'publishedDate', 'author', 'priority', 'category']) {
-                try {
-                  final value = resultJson[field] as String?;
-                  print('DEBUG: Field "$field" OK: $value');
-                } catch (fieldError) {
-                  print('DEBUG: Field "$field" ERROR: $fieldError (type: ${resultJson[field].runtimeType}, value: ${resultJson[field]})');
-                }
+              for (String field in [
+                'title',
+                'url',
+                'content',
+                'engine',
+                'template',
+                'thumbnail',
+                'img_src',
+                'publishedDate',
+                'author',
+                'priority',
+                'category',
+              ]) {
+                final value = resultJson[field];
+                print(
+                  'DEBUG: Field "$field" value type: ${value.runtimeType}, value: $value',
+                );
               }
               rethrow;
             }
           }
           
-          // Manual SearchResponse creation
-          final searchResponse = SearchResponse(
-            query: jsonData['query'] as String,
-            number_of_results: jsonData['number_of_results'] as int,
-            results: results,
-            corrections: (jsonData['corrections'] as List?)?.map((e) => e as String).toList(),
-            infoboxes: jsonData['infoboxes'] as List?,
-            suggestions: (jsonData['suggestions'] as List?)?.map((e) => e as String).toList(),
-            answers: (jsonData['answers'] as List?)?.map((e) => e as String).toList(),
-            unresponsive_engines: (jsonData['unresponsive_engines'] as List?)?.map((e) => e as String).toList(),
-          );
+          // Response-level metadata can also vary by category/engine, so route
+          // it through the same defensive model parser after normalizing results.
+          final searchResponse = SearchResponse.fromJson({
+            ...jsonData,
+            'results': results.map((result) => result.toJson()).toList(),
+          });
           
           print('DEBUG: Manual parsing successful, returning ${results.length} results');
           return searchResponse;
@@ -128,13 +171,31 @@ class SearXNGService {
   Future<List<EngineInfo>> getEngines() async {
     try {
       final uri = Uri.parse('$_baseUrl/engines');
-      final response = await _client.get(
-        uri,
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Golligog-Flutter-App/1.0',
-        },
-      ).timeout(const Duration(seconds: 5));
+      final primaryUri = _buildLocalhostFallbackUri(uri) ?? uri;
+      late final http.Response response;
+      try {
+        response = await _client
+            .get(
+              primaryUri,
+              headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'Golligog-Flutter-App/1.0',
+              },
+            )
+            .timeout(const Duration(seconds: 5));
+      } catch (_) {
+        final fallbackUri = primaryUri == uri ? _buildLocalhostFallbackUri(uri) : null;
+        if (fallbackUri == null) rethrow;
+        response = await _client
+            .get(
+              fallbackUri,
+              headers: {
+                'Accept': 'application/json',
+                'User-Agent': 'Golligog-Flutter-App/1.0',
+              },
+            )
+            .timeout(const Duration(seconds: 5));
+      }
       
       if (response.statusCode == 200) {
         final List<dynamic> jsonList = json.decode(response.body);
@@ -193,7 +254,16 @@ class SearXNGService {
   Future<bool> checkInstanceHealth() async {
     try {
       final uri = Uri.parse('$_baseUrl/healthz');
-      final response = await _client.get(uri).timeout(const Duration(seconds: 3));
+      final primaryUri = _buildLocalhostFallbackUri(uri) ?? uri;
+      late final http.Response response;
+      try {
+        response = await _client.get(primaryUri).timeout(const Duration(seconds: 3));
+      } catch (_) {
+        final fallbackUri = primaryUri == uri ? _buildLocalhostFallbackUri(uri) : null;
+        if (fallbackUri == null) return false;
+        response =
+            await _client.get(fallbackUri).timeout(const Duration(seconds: 3));
+      }
       return response.statusCode == 200;
     } catch (e) {
       return false;

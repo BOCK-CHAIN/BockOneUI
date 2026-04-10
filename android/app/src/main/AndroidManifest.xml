@@ -22,10 +22,19 @@
             <data android:mimeType="text/plain"/>
         </intent>
         <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="http" />
+        </intent>
+        <intent>
             <action android:name="android.speech.RecognitionService" />
         </intent>
     </queries>
     <application
+        android:usesCleartextTraffic="true"
         android:networkSecurityConfig="@xml/network_security_config"
         android:label="Bock One"
         android:name="${applicationName}"
@@ -58,6 +67,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyARFaHBlVkNT8-c3ytpzxyfFGZagGh_t7s" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility?hl=en and

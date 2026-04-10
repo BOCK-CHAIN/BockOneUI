@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:trial/screens/configuration/config.dart';
+import 'package:trial/screens/configuration/backend_url_resolver.dart';
+import 'package:trial/screens/golligog/config/app_config.dart' as env;
 import 'package:trial/screens/krysonix/krysonix_home_screen.dart';
 
 class KrysonixAuthScreen extends StatefulWidget {
@@ -15,35 +16,50 @@ class KrysonixAuthScreen extends StatefulWidget {
 class _KrysonixAuthScreenState extends State<KrysonixAuthScreen> {
   final _hexIdController = TextEditingController();
   final _passwordController = TextEditingController();
-  String _enteredHexID="";
-  String _enteredPassword="";
+  bool _isLoading = false;
 
-  void authenticate() async{
-    setState(() {
-      _enteredHexID = _hexIdController.text;
-      _enteredPassword = _passwordController.text;
-    });
+  void authenticate() async {
+    if (_isLoading) return;
 
-    final requestBody ={
-      'hexId': _enteredHexID,
-      'password': _enteredPassword,
-    };
-    const apiUrl = 'http://${AppConfig.ipAddress}:3000/api/auth/krysonixLogin';
-
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(requestBody),
-    );
-
-    final responseData = jsonDecode(response.body);
-
-    if (response.statusCode != 200 && response.statusCode != 201) {
-      _showError(responseData['error'] ?? 'Something went wrong');
+    final hexId = _hexIdController.text.trim();
+    final password = _passwordController.text;
+    if (hexId.isEmpty || password.isEmpty) {
+      _showError('HexId and password are required');
       return;
     }
 
-    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> KrysonixHomeScreen(hexId: _enteredHexID,)));
+    setState(() => _isLoading = true);
+
+    try {
+      final backendBaseUrl = await BackendUrlResolver.resolve(
+        configuredBaseUrl: env.AppConfig.backendBaseUrl,
+        defaultPort: 3000,
+      );
+
+      // Call BockOne's krysonixLogin endpoint (validates hexId + password).
+      final response = await http.post(
+        Uri.parse('$backendBaseUrl/api/auth/krysonixLogin'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'hexId': hexId, 'password': password}),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode != 200) {
+        _showError(responseData['error'] ?? 'Login failed');
+        return;
+      }
+
+      if (!mounted) return;
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => KrysonixHomeScreen(hexId: hexId)),
+      );
+    } catch (e) {
+      _showError('Unable to reach server. Please try again in a moment.');
+      debugPrint('Krysonix login error: $e');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   void _showError(String message) {
@@ -174,14 +190,23 @@ class _KrysonixAuthScreenState extends State<KrysonixAuthScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: authenticate,
-                      child: const Text(
-                        "Sign In",
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                        ),
-                      ),
+                      onPressed: _isLoading ? null : authenticate,
+                      child: _isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Text(
+                              "Sign In",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 15),

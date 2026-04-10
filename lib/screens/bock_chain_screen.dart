@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:trial/screens/golligog/golligo_main.dart';
 import 'package:trial/screens/hynorvixx.dart';
 import 'package:trial/screens/krysonix/krysonix_auth_screen.dart';
 import 'package:trial/screens/maps/maps_main.dart';
+import 'package:trial/screens/bock_foods_entry.dart';
 import 'package:trial/widgets/automotive_grid_item.dart';
+import 'package:trial/screens/ruviel/ruviel_entry.dart';
+import 'package:trial/screens/bock_drive/main.dart';
+import 'package:trial/screens/bock_docs/main.dart';
+import 'package:trial/screens/orventus/orventus_entry.dart';
+import 'package:trial/screens/bock_vote_host_screen.dart';
+import 'package:trial/screens/bock_defi_host_screen.dart';
 
 class BockChainScreen extends StatelessWidget {
   const BockChainScreen({super.key});
@@ -11,93 +17,106 @@ class BockChainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-
-    Widget content=SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(child: AutomotiveGridItem(title: 'Krysonix',height: 150,onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const KrysonixAuthScreen()));
-              },)),
-              const SizedBox(width: 10,),
-              Expanded(child: AutomotiveGridItem(title: 'Xorvane',height: 150,onTap: (){},)),
-            ],
-          ),
-          const SizedBox(height: 10,),
-          Row(
-            children: [
-              Expanded(child: AutomotiveGridItem(title: 'Hynorvixx',height: 150,onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SampleGridScreen()));
-              },)),
-              const SizedBox(width: 10,),
-              Expanded(child: AutomotiveGridItem(title: 'Bock Nexus',height: 150,onTap: (){},)),
-            ],
-          ),
-          const SizedBox(height: 10,),
-          Row(
-            children: [
-              Expanded(child: AutomotiveGridItem(title: 'Ruviel',height: 150,onTap: (){},)),
-              const SizedBox(width: 10,),
-              Expanded(child: AutomotiveGridItem(title: 'Chain',height: 150,onTap: (){},)),
-            ],
-          ),
-          const SizedBox(height: 10,),
-          Row(
-            children: [
-              Expanded(child: AutomotiveGridItem(title: 'Browser',height: 150,onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context)=>MyApp()));
-              },)),
-              const SizedBox(width: 10,),
-              Expanded(child: AutomotiveGridItem(title: 'De-Fi',height: 150,onTap: (){},)),
-            ],
-          ),
-        ],
-      ),
-    );
-
-    if (screenWidth > 1200) {
-      content=Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  Expanded(child: AutomotiveGridItem(title: 'Krysonix',height: 300,onTap:(){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const KrysonixAuthScreen()));
-                  })),
-                  const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'Xorvane',height: 300,onTap: (){},)),
-                  const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'Hynorvixx',height: 300,onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>SampleGridScreen()));
-                  },)),
-                  const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'Bock Nexus',height: 300,onTap: (){},)),
-                ],
-              ),
-              const SizedBox(height: 10,),
-              Row(
-                children: [
-                  Expanded(child: AutomotiveGridItem(title: 'Ruviel',height: 300,onTap: (){},)),
-                  const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'Chain',height: 300,onTap: (){},)),
-                  const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'Browser',height: 300,onTap: (){
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>MyApp()));
-                  },)),
-                  const SizedBox(width: 20,),
-                  Expanded(child: AutomotiveGridItem(title: 'De-Fi',height: 300,onTap: (){},)),
-                ],
-              ),
-            ],
-          ),
-        ),
+    void openBockVote() {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const BockVoteHostScreen()),
       );
     }
+
+    int getCrossAxisCount() {
+      if (screenWidth > 1200) return 4;
+      if (screenWidth > 800) return 3;
+      return 2;
+    }
+
+    double getChildAspectRatio() {
+      if (screenWidth > 1200) return 1.35;
+      return 1.15;
+    }
+
+    final items = <({String title, VoidCallback? onTap})>[
+      (
+        title: 'Krysonix',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const KrysonixAuthScreen()),
+        ),
+      ),
+      (title: 'Xorvane', onTap: () {}),
+      (
+        title: 'Hynorvixx',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => SampleGridScreen()),
+        ),
+      ),
+      (
+        title: 'Drive',
+        onTap: () {
+          final navigator = Navigator.of(context);
+          navigator.push(
+            MaterialPageRoute(
+              builder: (context) => BockDriveApp(onExit: () => navigator.pop()),
+            ),
+          );
+        },
+      ),
+      (
+        title: 'Docs',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const BockDocsApp()),
+        ),
+      ),
+      (
+        title: 'Ruviel',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const RuvielEntry()),
+        ),
+      ),
+      (
+        title: 'Foods',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const BockFoodsEntry()),
+        ),
+      ),
+      (
+        title: 'Orventus',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const OrventusEntry()),
+        ),
+      ),
+      (
+        title: 'Bock Vote',
+        onTap: () => openBockVote(),
+      ),
+      (title: 'Chain', onTap: () {}),
+      (
+        title: 'Browser',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const MyApp()),
+        ),
+      ),
+      (
+        title: 'De-Fi',
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const BockDeFiHostScreen()),
+        ),
+      ),
+    ];
+
+    final content = GridView.count(
+      padding: const EdgeInsets.all(20),
+      crossAxisCount: getCrossAxisCount(),
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: getChildAspectRatio(),
+      children: [
+        for (final item in items)
+          AutomotiveGridItem(
+            title: item.title,
+            height: 200,
+            onTap: item.onTap,
+          ),
+      ],
+    );
 
     return Scaffold(
       backgroundColor: const Color(0xFFEBDFF4), // Your background

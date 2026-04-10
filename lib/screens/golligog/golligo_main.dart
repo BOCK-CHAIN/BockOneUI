@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'search_results_page.dart';
 import 'auth_wrapper.dart';
@@ -522,16 +524,6 @@ class _HomePageState extends State<HomePage> {
     if (query.trim().isNotEmpty) {
       final trimmedQuery = query.trim();
 
-      // Save search to history if user is logged in
-      if (_isLoggedIn) {
-        try {
-          await AuthService.saveSearchHistory(trimmedQuery);
-        } catch (e) {
-          // Don't block search if history save fails
-          print('Failed to save search history: $e');
-        }
-      }
-
       // Navigate to search results page
       Navigator.push(
         context,
@@ -539,6 +531,15 @@ class _HomePageState extends State<HomePage> {
           builder: (context) => SearchResultsPage(query: trimmedQuery),
         ),
       );
+
+      // Save history in background so navigation is never blocked by API latency.
+      if (_isLoggedIn) {
+        unawaited(
+          AuthService.saveSearchHistory(trimmedQuery).catchError((e) {
+            print('Failed to save search history: $e');
+          }),
+        );
+      }
     } else {
       // Show error if search is empty
       ScaffoldMessenger.of(context).showSnackBar(

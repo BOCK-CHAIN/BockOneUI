@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'add_place_modal.dart';
 import 'place_selection_modal.dart';
+import '../../config/maps_api_config.dart';
 
 class ContributePage extends StatefulWidget {
   final String userId;
@@ -18,6 +19,7 @@ class _ContributePageState extends State<ContributePage> {
   List<Map<String, dynamic>> _userPlaces = [];
   bool _isLoading = true;
   String? _error;
+  final String _backendUrl = MapsApiConfig.backendBaseUrl;
 
   @override
   void initState() {
@@ -46,9 +48,8 @@ class _ContributePageState extends State<ContributePage> {
         return;
       }
 
-      const String apiUrl = 'http://0.0.0.0:3000/contribute/user-contributions';
       final response = await http.get(
-        Uri.parse('$apiUrl?page=1&limit=20'),
+        Uri.parse('$_backendUrl/contribute/user-contributions?page=1&limit=20'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

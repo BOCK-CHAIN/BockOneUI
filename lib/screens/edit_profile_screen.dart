@@ -1,13 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:trial/screens/configuration/config.dart';
+import 'package:trial/screens/configuration/backend_url_resolver.dart';
+import 'package:trial/screens/golligog/config/app_config.dart' as env;
 import 'package:trial/widgets/image_picker.dart';
 import 'dart:convert';
 import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
 //import 'package:date_time_format/date_time_format.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -48,21 +47,10 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
   }
 
   Future<String> getBaseUrl() async {
-    if (kIsWeb) {
-      // Accessing from browser (Flutter Web)
-      return 'http://${AppConfig.ipAddress}:3000'; // Replace with your PC IP
-    }
-
-    if (Platform.isAndroid) {
-      final androidInfo = await DeviceInfoPlugin().androidInfo;
-      if (androidInfo.isPhysicalDevice) {
-        return 'http://${AppConfig.ipAddress}:3000'; // Real device
-      } else {
-        return 'http://${AppConfig.ipAddress}:3000'; // Emulator
-      }
-    } else {
-      return 'http://${AppConfig.ipAddress}:3000'; // iOS or web
-    }
+    return BackendUrlResolver.resolve(
+      configuredBaseUrl: env.AppConfig.backendBaseUrl,
+      defaultPort: 3000,
+    );
   }
 
   Future<void> _loadUserData() async {
@@ -100,7 +88,7 @@ class EditProfileScreenState extends State<EditProfileScreen> with TickerProvide
     }
   }
 
-  void getImageUrl(File image) {
+  void getImageUrl(dynamic image) {
     imageUrl = image;
   }
 

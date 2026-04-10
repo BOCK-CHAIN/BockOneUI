@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatefulWidget {
@@ -10,7 +12,7 @@ class ImageInput extends StatefulWidget {
     this.initialImageUrl,
   });
 
-  final void Function(File image)? getImageUrl;
+  final void Function(dynamic image)? getImageUrl; // Changed to support File on mobile, XFile on web
   final String? initialImageUrl; // 👈 Add this for network image
 
   @override
@@ -18,7 +20,8 @@ class ImageInput extends StatefulWidget {
 }
 
 class _ImageInputState extends State<ImageInput> {
-  File? _selectedImage;
+  dynamic _selectedImage; // File on mobile, XFile on web
+  Uint8List? _webImageBytes; // Store bytes for web
   late String? _networkImageUrl;
 
   @override
@@ -34,12 +37,24 @@ class _ImageInputState extends State<ImageInput> {
 
     if (pickedImage == null) return;
 
-    setState(() {
-      _selectedImage = File(pickedImage.path);
-      _networkImageUrl = null; // Clear previous image when new one is picked
-    });
+    if (kIsWeb) {
+      // For web, read bytes and store them
+      final bytes = await pickedImage.readAsBytes();
+      setState(() {
+        _selectedImage = pickedImage; // Keep XFile for web
+        _webImageBytes = bytes;
+        _networkImageUrl = null;
+      });
+    } else {
+      // For mobile/desktop, create File
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+        _webImageBytes = null;
+        _networkImageUrl = null;
+      });
+    }
 
-    widget.getImageUrl?.call(_selectedImage!);
+    widget.getImageUrl?.call(_selectedImage);
   }
 
   @override
@@ -47,7 +62,13 @@ class _ImageInputState extends State<ImageInput> {
     ImageProvider? backgroundImage;
 
     if (_selectedImage != null) {
-      backgroundImage = FileImage(_selectedImage!);
+      if (kIsWeb && _webImageBytes != null) {
+        // For web, use MemoryImage with bytes
+        backgroundImage = MemoryImage(_webImageBytes!);
+      } else if (!kIsWeb) {
+        // For mobile/desktop, use FileImage
+        backgroundImage = FileImage(_selectedImage!);
+      }
     } else if (_networkImageUrl != null && _networkImageUrl!.isNotEmpty) {
       backgroundImage = NetworkImage(_networkImageUrl!);
     }

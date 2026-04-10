@@ -35,6 +35,7 @@ class AutomotiveGridItem extends StatelessWidget {
       case 'Momentum' : return 'https://ids.si.edu/ids/deliveryService?id=NASM-A19700271000-NASM2018-10448-000001&max=900';
       case 'Fully Reusable Rocket' : return 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSQ21qUXZ5p27o0czfQ03A9sKQiet73jXlwrw&s';
       case 'Orventus' : return 'https://irp.cdn-website.com/2b9cb2fc/dms3rep/multi/Depositphotos_2111331_S.jpg';
+      case 'Bock Vote' : return 'https://images.pexels.com/photos/1550337/pexels-photo-1550337.jpeg';
       case 'BAVT' : return 'https://images.ansys.com/is/image/ansys/iot-autonomous-vehicle-electrification-high-tech?wid=880&fmt=webp&op_usm=0.9,1.0,20,0&fit=constrain,0';
       case 'Zeyon' : return 'https://www.icdrex.com/wp-content/uploads/2025/04/Introduction-to-semiconductors.png';
       case 'Zeyon G90' : return 'https://media.geeksforgeeks.org/wp-content/uploads/20240607155215/5126124-300.jpg';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../config/maps_api_config.dart';
 
 class EditPlaceModal extends StatefulWidget {
   final String userId;
@@ -21,6 +22,7 @@ class _EditPlaceModalState extends State<EditPlaceModal>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isSubmitting = false;
+  final String _backendUrl = MapsApiConfig.backendBaseUrl;
 
   final List<String> tabs = [
     "General",
@@ -303,8 +305,8 @@ class _EditPlaceModalState extends State<EditPlaceModal>
         'price_range': _priceRangeController.text.trim(),
       };
 
-      final String apiUrl = 'http://10.0.2.2:3000/contribute/place/${widget
-          .placeData['place_id']}';
+      final String apiUrl =
+          '$_backendUrl/contribute/place/${widget.placeData['place_id']}';
 
       final response = await http.put(
         Uri.parse(apiUrl),
